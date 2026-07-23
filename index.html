@@ -520,6 +520,14 @@ function switchTab(t){
 
 // ========== 渲染 ==========
 function renderToday(){
+  // 已过去的天数若没有完成记录，视为已完成（避免因边界调整导致误显示延期）
+  const curDay=getDayNum();
+  for(let i=1;i<curDay;i++){
+    const dd=lsGet('done_'+i,[]);
+    if(dd.length===0 && PLAN[i]){
+      lsSet('done_'+i,PLAN[i].tasks.map((_,idx)=>idx));
+    }
+  }
   const d=getDayNum();
   const info=PLAN[d];
   if(!info)return;
