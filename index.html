@@ -520,12 +520,11 @@ function switchTab(t){
 
 // ========== 渲染 ==========
 function renderToday(){
-  // 已过去的天数若没有完成记录，视为已完成（避免因边界调整导致误显示延期）
-  const curDay=getDayNum();
-  for(let i=1;i<curDay;i++){
-    const dd=lsGet('done_'+i,[]);
-    if(dd.length===0 && PLAN[i]){
-      lsSet('done_'+i,PLAN[i].tasks.map((_,idx)=>idx));
+  // 一次性修复：D1因边界调整丢失完成记录，仅补全D1
+  if(getDayNum()>=2){
+    const d1=lsGet('done_1',[]);
+    if(d1.length===0 && PLAN[1]){
+      lsSet('done_1',PLAN[1].tasks.map((_,idx)=>idx));
     }
   }
   const d=getDayNum();
