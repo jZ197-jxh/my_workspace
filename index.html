@@ -185,7 +185,7 @@ body{font-family:-apple-system,"PingFang SC","Hiragino Sans GB","Microsoft YaHei
 <div class="footer">🫛 豌豆工作台 · 数据保存在本地</div>
 
 <script>
-// ========== 41天完整任务数据 ==========
+// ========== 40天完整任务数据 ==========
 const START=new Date(2026,6,22); // 7月22日
 const PLAN={
 1:{date:"7.22",wd:"周三",phase:"第一阶段 · 启动期",hint:"今天只做两件事",tasks:[
@@ -422,7 +422,7 @@ function getDayNum(){
   start.setHours(5,0,0,0);
   const diff=Math.floor((shifted-start)/(86400000))+1;
   if(diff<1)return 1;
-  if(diff>41)return 41;
+  if(diff>40)return 40;
   return diff;
 }
 
@@ -505,7 +505,7 @@ function renderToday(){
 
   // 总进度
   let allDone=0,allTotal=0;
-  for(let i=1;i<=41;i++){
+  for(let i=1;i<=40;i++){
     allTotal+=PLAN[i].tasks.length;
     allDone+=lsGet('done_'+i,[]).length;
     allDone+=lsGet('co_done_'+i,[]).length;
@@ -521,7 +521,7 @@ function renderToday(){
     if(dd.length>0||co.length>0){streak++;}else{break;}
   }
   if(streak===0){
-    for(let i=d+1;i<=41;i++){
+    for(let i=d+1;i<=40;i++){
       const dd=lsGet('done_'+i,[]);
       const co=lsGet('co_done_'+i,[]);
       if(dd.length>0||co.length>0){streak++;}else{break;}
@@ -574,7 +574,7 @@ function refreshStats(day){
   const doneN=done.length+coDone.length;
   document.getElementById('sToday').textContent=doneN+'/'+total;
   let allDone=0,allTotal=0;
-  for(let i=1;i<=41;i++){
+  for(let i=1;i<=40;i++){
     allTotal+=PLAN[i].tasks.length;
     allDone+=lsGet('done_'+i,[]).length;
     allDone+=lsGet('co_done_'+i,[]).length;
@@ -588,7 +588,7 @@ function refreshStats(day){
     if(dd.length>0||co.length>0){streak++;}else{break;}
   }
   if(streak===0){
-    for(let i=d+1;i<=41;i++){
+    for(let i=d+1;i<=40;i++){
       const dd=lsGet('done_'+i,[]);
       const co=lsGet('co_done_'+i,[]);
       if(dd.length>0||co.length>0){streak++;}else{break;}
@@ -608,7 +608,7 @@ function renderWeek(){
     const dt=new Date(mon);dt.setDate(mon.getDate()+i);
     const shifted_dt=new Date(dt.getTime()+5*3600000);
     const dn=Math.floor((shifted_dt-START)/86400000)+1;
-    if(dn>=1&&dn<=41)weekDays.push(dn);
+    if(dn>=1&&dn<=40)weekDays.push(dn);
   }
   if(weekDays.length===0){document.getElementById('weekList').innerHTML='<div style="color:#aaa">当前不在计划范围内</div>';return;}
 
@@ -648,7 +648,7 @@ function renderProgress(){
     {range:[15,21],ch:2}, // 魏晋
     {range:[22,28],ch:3}, // 隋唐
     {range:[29,35],ch:4}, // 宋代
-    {range:[36,41],ch:5}  // 元明清
+    {range:[36,40],ch:5}  // 元明清
   ];
   litDays.forEach(l=>{
     let done=0;
@@ -676,7 +676,7 @@ function renderProgress(){
   listenSets.forEach(s=>{
     let allDone=true;
     for(let i=s[0];i<=s[1];i++){
-      if(i>41||i<d){const dd=lsGet('done_'+i,[]);if(dd.length===0)allDone=false;}
+      if(i>40||i<d){const dd=lsGet('done_'+i,[]);if(dd.length===0)allDone=false;}
       else allDone=false;
     }
     if(allDone&&d>=s[1])setsDone++;
