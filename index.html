@@ -541,13 +541,20 @@ function renderToday(){
   });
 
   // 自动顺延：收集之前所有天未完成的
+  // 通过任务内容匹配判断是否已在当天完成（处理边界调整导致的key错位）
+  const todayDone=lsGet('done_'+d,[]);
+  const todayTaskKeys=info.tasks.map(t=>t.t);
+  const todayDoneKeys=todayDone.map(i=>todayTaskKeys[i]||'');
   let carryOvers=[];
   for(let prev=1;prev<d;prev++){
     const pInfo=PLAN[prev];
     if(!pInfo)continue;
     const prevDone=lsGet('done_'+prev,[]);
+    if(prevDone.length>=pInfo.tasks.length)continue; // 前一天全部完成，跳过
     pInfo.tasks.forEach((t,idx)=>{
       if(!prevDone.includes(idx)){
+        // 检查该任务是否已在今天的完成列表中（内容匹配）
+        if(todayDoneKeys.includes(t.t))return;
         carryOvers.push({task:t,fromDay:prev,idx:idx});
       }
     });
@@ -622,14 +629,21 @@ function toggleCoTask(day,key,el){
 function refreshStats(day){
   const d=getDayNum();
   const info=PLAN[day];
-  // 计算延期任务数
+  // 计算延期任务数（与renderToday保持一致的内容匹配逻辑）
+  const todayDone=lsGet('done_'+d,[]);
+  const todayTaskKeys=info.tasks.map(t=>t.t);
+  const todayDoneKeys=todayDone.map(i=>todayTaskKeys[i]||'');
   let coTotal=0;
   for(let prev=1;prev<day;prev++){
     const pInfo=PLAN[prev];
     if(!pInfo)continue;
     const prevDone=lsGet('done_'+prev,[]);
+    if(prevDone.length>=pInfo.tasks.length)continue;
     pInfo.tasks.forEach((t,idx)=>{
-      if(!prevDone.includes(idx))coTotal++;
+      if(!prevDone.includes(idx)){
+        if(todayDoneKeys.includes(t.t))return;
+        coTotal++;
+      }
     });
   }
   const done=lsGet('done_'+day,[]);
