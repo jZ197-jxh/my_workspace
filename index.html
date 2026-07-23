@@ -524,8 +524,11 @@ function renderToday(){
   document.getElementById('todayHint').textContent=info.hint||'';
 
   const done=lsGet('done_'+d,[]);
+  const coDone=lsGet('co_done_'+d,[]);
   const bd=document.getElementById('todayTasks');
   bd.innerHTML='';
+
+  // 渲染当天任务
   info.tasks.forEach((t,i)=>{
     const div=document.createElement('div');
     div.className='step'+(done.includes(i)?' done':'');
@@ -534,17 +537,46 @@ function renderToday(){
     bd.appendChild(div);
   });
 
+  // 自动顺延：收集之前所有天未完成的
+  let carryOvers=[];
+  for(let prev=1;prev<d;prev++){
+    const pInfo=PLAN[prev];
+    if(!pInfo)continue;
+    const prevDone=lsGet('done_'+prev,[]);
+    pInfo.tasks.forEach((t,idx)=>{
+      if(!prevDone.includes(idx)){
+        carryOvers.push({task:t,fromDay:prev,idx:idx});
+      }
+    });
+  }
+
+  if(carryOvers.length>0){
+    const secDiv=document.createElement('div');
+    secDiv.className='sec-title';
+    secDiv.textContent='📦 延期任务（'+carryOvers.length+'项）';
+    bd.appendChild(secDiv);
+    carryOvers.forEach((co,ci)=>{
+      const div=document.createElement('div');
+      const key=co.fromDay+'_'+co.idx;
+      div.className='step'+(coDone.includes(key)?' done':'');
+      const t=co.task;
+      div.innerHTML='<div class="chk"></div><div class="stxt">'+(t.cat?t.cat+' ':'')+'<span style="color:#e09015;font-size:11px;font-weight:600;">延期 </span>'+t.t+(t.s?'<span class="sub">'+t.s+'</span>':'')+'</div>';
+      div.onclick=function(){toggleCoTask(d,key,this);};
+      bd.appendChild(div);
+    });
+  }
+
   // 统计
-  const total=info.tasks.length;
-  const doneN=done.length;
+  const total=info.tasks.length+carryOvers.length;
+  const doneN=done.length+coDone.length;
   document.getElementById('sToday').textContent=doneN+'/'+total;
 
   // 总进度
   let allDone=0,allTotal=0;
   for(let i=1;i<=41;i++){
     allTotal+=PLAN[i].tasks.length;
-    const dd=lsGet('done_'+i,[]);
-    allDone+=dd.length;
+    allDone+=lsGet('done_'+i,[]).length;
+    allDone+=lsGet('co_done_'+i,[]).length;
   }
   document.getElementById('sTotal').textContent=Math.round(allDone/allTotal*100)+'%';
 
@@ -553,12 +585,14 @@ function renderToday(){
   const today=new Date();today.setHours(0,0,0,0);
   for(let i=d;i>=1;i--){
     const dd=lsGet('done_'+i,[]);
-    if(dd.length>0){streak++;}else{break;}
+    const co=lsGet('co_done_'+i,[]);
+    if(dd.length>0||co.length>0){streak++;}else{break;}
   }
   if(streak===0){
     for(let i=d+1;i<=41;i++){
       const dd=lsGet('done_'+i,[]);
-      if(dd.length>0){streak++;}else{break;}
+      const co=lsGet('co_done_'+i,[]);
+      if(dd.length>0||co.length>0){streak++;}else{break;}
     }
   }
   document.getElementById('sStreak').textContent=streak;
@@ -570,12 +604,58 @@ function toggleTask(day,idx,el){
   if(p>=0){done.splice(p,1);el.classList.remove('done');}
   else{done.push(idx);el.classList.add('done');}
   lsSet('done_'+day,done);
-  // 更新统计
+  refreshStats(day);
+}
+
+function toggleCoTask(day,key,el){
+  const coDone=lsGet('co_done_'+day,[]);
+  const p=coDone.indexOf(key);
+  if(p>=0){coDone.splice(p,1);el.classList.remove('done');}
+  else{coDone.push(key);el.classList.add('done');}
+  lsSet('co_done_'+day,coDone);
+  refreshStats(day);
+}
+
+function refreshStats(day){
+  const d=getDayNum();
   const info=PLAN[day];
-  document.getElementById('sToday').textContent=done.length+'/'+info.tasks.length;
+  // 计算延期任务数
+  let coTotal=0;
+  for(let prev=1;prev<day;prev++){
+    const pInfo=PLAN[prev];
+    if(!pInfo)continue;
+    const prevDone=lsGet('done_'+prev,[]);
+    pInfo.tasks.forEach((t,idx)=>{
+      if(!prevDone.includes(idx))coTotal++;
+    });
+  }
+  const done=lsGet('done_'+day,[]);
+  const coDone=lsGet('co_done_'+day,[]);
+  const total=info.tasks.length+coTotal;
+  const doneN=done.length+coDone.length;
+  document.getElementById('sToday').textContent=doneN+'/'+total;
   let allDone=0,allTotal=0;
-  for(let i=1;i<=41;i++){allTotal+=PLAN[i].tasks.length;allDone+=lsGet('done_'+i,[]).length;}
+  for(let i=1;i<=41;i++){
+    allTotal+=PLAN[i].tasks.length;
+    allDone+=lsGet('done_'+i,[]).length;
+    allDone+=lsGet('co_done_'+i,[]).length;
+  }
   document.getElementById('sTotal').textContent=Math.round(allDone/allTotal*100)+'%';
+  // 更新连续打卡
+  let streak=0;
+  for(let i=d;i>=1;i--){
+    const dd=lsGet('done_'+i,[]);
+    const co=lsGet('co_done_'+i,[]);
+    if(dd.length>0||co.length>0){streak++;}else{break;}
+  }
+  if(streak===0){
+    for(let i=d+1;i<=41;i++){
+      const dd=lsGet('done_'+i,[]);
+      const co=lsGet('co_done_'+i,[]);
+      if(dd.length>0||co.length>0){streak++;}else{break;}
+    }
+  }
+  document.getElementById('sStreak').textContent=streak;
 }
 
 function renderWeek(){
