@@ -502,7 +502,10 @@ function lsSet(k,v){try{localStorage.setItem(lsKey(k),JSON.stringify(v));}catch(
 
 function getDayNum(){
   const now=new Date();
-  const diff=Math.floor((now-START)/(86400000))+1;
+  const shifted=new Date(now.getTime()-5*3600000);
+  const start=new Date(START);
+  start.setHours(5,0,0,0);
+  const diff=Math.floor((shifted-start)/(86400000))+1;
   if(diff<1)return 1;
   if(diff>41)return 41;
   return diff;
@@ -667,7 +670,8 @@ function renderWeek(){
   const weekDays=[];
   for(let i=0;i<7;i++){
     const dt=new Date(mon);dt.setDate(mon.getDate()+i);
-    const dn=Math.floor((dt-START)/86400000)+1;
+    const shifted_dt=new Date(dt.getTime()+5*3600000);
+    const dn=Math.floor((shifted_dt-START)/86400000)+1;
     if(dn>=1&&dn<=41)weekDays.push(dn);
   }
   if(weekDays.length===0){document.getElementById('weekList').innerHTML='<div style="color:#aaa">当前不在计划范围内</div>';return;}
