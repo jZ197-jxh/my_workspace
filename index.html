@@ -1,0 +1,775 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
+<meta http-equiv="Pragma" content="no-cache">
+<meta http-equiv="Expires" content="0">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+<title>豆 · 工作台</title>
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="豆">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="theme-color" content="#9AB99C">
+<meta name="application-name" content="豆">
+<meta name="apple-touch-fullscreen" content="yes">
+<link rel="manifest" href='data:application/manifest+json,{"name":"豆 · 工作台","short_name":"豆","start_url":".","display":"standalone","background_color":"%23f5f7f3","theme_color":"%239AB99C","icons":[{"src":"data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSI1MTIiIGhlaWdodD0iNTEyIiB2aWV3Qm94PSIwIDAgNTEyIDUxMiI+CiAgPHJlY3Qgd2lkdGg9IjUxMiIgaGVpZ2h0PSI1MTIiIHJ4PSI5NiIgZmlsbD0iI0E4QzdBMCIvPgogIDx0ZXh0IHg9IjI1NiIgeT0iMjcwIiBmb250LWZhbWlseT0ic2Fucy1zZXJpZiIgZm9udC1zaXplPSIyMjAiIGZvbnQtd2VpZ2h0PSIzMDAiIGZpbGw9IndoaXRlIiB0ZXh0LWFuY2hvcj0ibWlkZGxlIiBkb21pbmFudC1iYXNlbGluZT0iY2VudHJhbCI+6LGGPC90ZXh0Pgo8L3N2Zz4=","sizes":"512x512","type":"image/svg+xml"}]}'>
+<link rel="apple-touch-icon" href='data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSI1MTIiIGhlaWdodD0iNTEyIiB2aWV3Qm94PSIwIDAgNTEyIDUxMiI+CiAgPHJlY3Qgd2lkdGg9IjUxMiIgaGVpZ2h0PSI1MTIiIHJ4PSI5NiIgZmlsbD0iI0E4QzdBMCIvPgogIDx0ZXh0IHg9IjI1NiIgeT0iMjcwIiBmb250LWZhbWlseT0ic2Fucy1zZXJpZiIgZm9udC1zaXplPSIyMjAiIGZvbnQtd2VpZ2h0PSIzMDAiIGZpbGw9IndoaXRlIiB0ZXh0LWFuY2hvcj0ibWlkZGxlIiBkb21pbmFudC1iYXNlbGluZT0iY2VudHJhbCI+6LGGPC90ZXh0Pgo8L3N2Zz4='>
+<style>
+:root{--green:#9AB99C;--green-light:#B5CFBA;--green-bg:#f0f5f0;--card:#fff;--bg:#f5f7f3;--text:#333;--text2:#555;--text3:#888;--text4:#bbb;--border:#eee;}
+*{margin:0;padding:0;box-sizing:border-box;}
+body{font-family:-apple-system,"PingFang SC","Hiragino Sans GB","Microsoft YaHei",sans-serif;background:var(--bg);color:var(--text);min-height:100vh;-webkit-tap-highlight-color:transparent;}
+.header{background:linear-gradient(135deg,var(--green),var(--green-light));padding:20px 16px 16px;color:#fff;display:flex;justify-content:space-between;align-items:flex-start;}
+.header h1{font-size:20px;font-weight:600;letter-spacing:1px;}
+.header .motto{font-size:12px;opacity:.8;margin-top:4px;}
+.header .date{text-align:right;font-size:13px;opacity:.9;}
+.header .date small{font-size:11px;opacity:.7;display:block;margin-top:2px;}
+.container{max-width:520px;margin:0 auto;padding:12px;}
+
+/* 阶段条 */
+.phase{background:var(--card);border-radius:12px;padding:14px 16px;margin-bottom:10px;box-shadow:0 1px 3px rgba(0,0,0,.05);display:flex;justify-content:space-between;align-items:center;}
+.phase .name{font-size:15px;font-weight:600;color:var(--green);}
+.phase .days{font-size:12px;color:var(--text3);}
+
+/* 统计 */
+.stats{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-bottom:10px;}
+.stat{background:var(--card);border-radius:10px;padding:12px 8px;text-align:center;box-shadow:0 1px 3px rgba(0,0,0,.05);}
+.stat .num{font-size:22px;font-weight:700;color:var(--green);}
+.stat .desc{font-size:11px;color:var(--text3);margin-top:2px;}
+
+/* 卡片 */
+.card{background:var(--card);border-radius:12px;overflow:hidden;box-shadow:0 1px 3px rgba(0,0,0,.05);margin-bottom:10px;}
+.card-hd{padding:13px 16px;border-bottom:1px solid var(--border);display:flex;justify-content:space-between;align-items:center;}
+.card-hd h2{font-size:15px;font-weight:600;}
+.card-hd .hint{font-size:12px;color:var(--text3);}
+.card-bd{padding:10px 14px 14px;}
+
+/* 任务项 */
+.step{display:flex;align-items:flex-start;gap:10px;padding:10px 8px;border-radius:8px;margin-bottom:2px;cursor:pointer;transition:background .15s;-webkit-user-select:none;user-select:none;}
+.step:active{background:#f0f0f0;}
+.chk{width:22px;height:22px;border:2px solid #d0d0d0;border-radius:50%;flex-shrink:0;margin-top:0;display:flex;align-items:center;justify-content:center;transition:all .15s;}
+.step.done .chk{background:var(--green);border-color:var(--green);}
+.step.done .chk::after{content:"✓";color:#fff;font-size:12px;font-weight:700;}
+.step.done .stxt{color:var(--text4);text-decoration:line-through;}
+.stxt{font-size:13.5px;line-height:1.55;flex:1;}
+.stxt .sub{font-size:12px;color:var(--text3);display:block;margin-top:2px;}
+
+.sec-title{font-size:12px;font-weight:600;color:var(--text3);padding:8px 8px 4px;margin-top:6px;text-transform:uppercase;letter-spacing:.5px;}
+.sec-title:first-child{margin-top:0;}
+
+/* 本周概览 */
+.week-list{font-size:12.5px;line-height:1.85;color:var(--text2);padding-left:4px;}
+.week-list .today{background:var(--green-bg);border-radius:6px;padding:2px 6px;margin:0 -6px;}
+.week-list .today strong{color:var(--green);}
+
+/* 进度条 */
+.prog{padding:8px 0;}
+.prog-label{font-size:12px;color:var(--text3);margin-bottom:4px;}
+.prog-bar{height:6px;background:#eee;border-radius:3px;overflow:hidden;}
+.prog-bar .fill{height:100%;border-radius:3px;background:linear-gradient(90deg,var(--green),var(--green-light));transition:width .4s;}
+.prog-info{display:flex;justify-content:space-between;font-size:11px;color:var(--text3);margin-top:3px;}
+
+/* 体重 */
+.weight-row{display:flex;gap:8px;align-items:center;padding:4px 0;}
+.weight-row input{flex:1;padding:7px 10px;border:1px solid #e0e0e0;border-radius:8px;font-size:14px;outline:none;transition:border .2s;}
+.weight-row input:focus{border-color:var(--green);}
+.weight-row button{padding:7px 14px;background:var(--green);color:#fff;border:none;border-radius:8px;font-size:13px;cursor:pointer;white-space:nowrap;}
+.weight-log{font-size:11px;color:var(--text3);margin-top:6px;max-height:80px;overflow-y:auto;}
+
+.footer{text-align:center;padding:20px 0;color:#ccc;font-size:11px;}
+
+/* 滚动条 */
+::-webkit-scrollbar{width:0;height:0;}
+
+/* tab */
+.tabs{display:flex;gap:0;margin-bottom:10px;background:var(--card);border-radius:10px;overflow:hidden;box-shadow:0 1px 3px rgba(0,0,0,.05);}
+.tab{flex:1;text-align:center;padding:10px 0;font-size:13px;font-weight:500;color:var(--text3);cursor:pointer;transition:all .2s;border-bottom:2px solid transparent;}
+.tab.active{color:var(--green);border-bottom-color:var(--green);background:var(--green-bg);}
+.tab-content{display:none;}
+.tab-content.active{display:block;}
+
+/* 阅读 */
+.book-row{padding:6px 0;}
+.book-label{font-size:12px;color:var(--text3);margin-bottom:5px;}
+.books{display:flex;flex-wrap:wrap;gap:5px;}
+.book{font-size:11px;padding:3px 8px;border-radius:6px;background:#f0f0f0;color:#666;}
+.book.cur{background:#e6f7ff;color:#1890ff;border:1px solid #1890ff;}
+.book.ok{background:var(--green-bg);color:var(--green);text-decoration:line-through;}
+</style>
+</head>
+<body>
+
+<div class="header">
+  <div>
+    <h1>豆 · 工作台</h1>
+    <div class="motto">想法交给我来拆，你只负责动手</div>
+  </div>
+  <div class="date">
+    <div id="curDate"></div>
+    <small id="curTime"></small>
+  </div>
+</div>
+
+<div class="container">
+  <div class="phase" id="phaseBar">
+    <span class="name" id="phaseName">--</span>
+    <span class="days" id="phaseDays">--</span>
+  </div>
+
+  <div class="stats">
+    <div class="stat"><div class="num" id="sToday">0/0</div><div class="desc">今日完成</div></div>
+    <div class="stat"><div class="num" id="sStreak">1</div><div class="desc">连续打卡</div></div>
+    <div class="stat"><div class="num" id="sTotal">0%</div><div class="desc">总进度</div></div>
+  </div>
+
+  <div class="tabs">
+    <div class="tab active" onclick="switchTab('today')">今日任务</div>
+    <div class="tab" onclick="switchTab('week')">本周概览</div>
+    <div class="tab" onclick="switchTab('progress')">总进度</div>
+  </div>
+
+  <!-- 今日任务 -->
+  <div class="tab-content active" id="tc-today">
+    <div class="card">
+      <div class="card-hd">
+        <h2 id="todayTitle">📌 --</h2>
+        <span class="hint" id="todayHint"></span>
+      </div>
+      <div class="card-bd" id="todayTasks"></div>
+    </div>
+  </div>
+
+  <!-- 本周概览 -->
+  <div class="tab-content" id="tc-week">
+    <div class="card">
+      <div class="card-hd"><h2>📅 本周安排</h2><span class="hint" id="weekRange"></span></div>
+      <div class="card-bd"><div class="week-list" id="weekList"></div></div>
+    </div>
+  </div>
+
+  <!-- 总进度 -->
+  <div class="tab-content" id="tc-progress">
+    <div class="card">
+      <div class="card-hd"><h2>📚 文学史进度</h2><span class="hint">3册约40章</span></div>
+      <div class="card-bd" id="litProgress"></div>
+    </div>
+    <div class="card">
+      <div class="card-hd"><h2>🎧 六级听力</h2><span class="hint">6套真题</span></div>
+      <div class="card-bd">
+        <div class="prog">
+          <div class="prog-bar"><div class="fill" id="listenFill" style="width:0%"></div></div>
+          <div class="prog-info"><span id="listenInfo">0/6 套</span><span>基线98 → 目标120+</span></div>
+        </div>
+      </div>
+    </div>
+    <div class="card">
+      <div class="card-hd"><h2>📕 阅读进度</h2></div>
+      <div class="card-bd">
+        <div class="book-row"><div class="book-label">当前 · 川端康成</div><div class="books"><span class="book">母亲的初恋</span><span class="book">水月</span><span class="book">雪国（含千羽鹤）</span></div></div>
+        <div class="book-row"><div class="book-label">接下来</div><div class="books"><span class="book">众神的样子</span><span class="book">众神的战争</span><span class="book">蛇结</span><span class="book">赫索格</span></div></div>
+        <div class="book-row"><div class="book-label">冲刺 · 阿加莎·波洛系列</div><div class="books"><span class="book">斯泰尔斯庄园奇案</span><span class="book">首相绑架案</span><span class="book">高尔夫球场命案</span><span class="book" style="color:#bbb">…共39本</span></div></div>
+      </div>
+    </div>
+    <div class="card">
+      <div class="card-hd"><h2>🏃 体态矫正</h2><span class="hint">欧阳春晓</span></div>
+      <div class="card-bd" id="exerciseProgress"></div>
+    </div>
+    <div class="card">
+      <div class="card-hd"><h2>📏 体重记录</h2><span class="hint">目标120斤以下</span></div>
+      <div class="card-bd">
+        <div class="weight-row"><input type="text" id="weightInput" placeholder="输入今天体重（斤）"><button onclick="saveWeight()">记录</button></div>
+        <div class="weight-log" id="weightLog"></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="footer">🫛 豌豆工作台 · 数据保存在本地</div>
+
+<script>
+// ========== 40天完整任务数据 ==========
+const START=new Date(2026,6,28); // 7月22日
+const PLAN={
+1:{date:"7.28",wd:"周二",phase:"第一阶段 · 启动期",hint:"今天只做两件事",tasks:[
+  {cat:"🎧",t:"打开扇贝听力口语 → 四六级 → 随便找一段六级听力听一遍",s:"用精听模式试试，感受难度，不用在意对错"},
+  {cat:"📖",t:"川端康成·《母亲的初恋》",s:"随便翻几页，不用赶进度"}
+]},
+2:{date:"7.29",wd:"周三",phase:"第一阶段 · 启动期",hint:"正式进入节奏",tasks:[  {cat:"📚",t:"文学史：总绪论 + 第一编绪论 + 第一章 上古神话",s:"先通读总绪论和第一编绪论，标注分期方法和先秦文学特点；再读上古神话，标注分类、四大神话、文学特征；完成精修框架"},
+  {cat:"📖",t:"小学教材：语文 1-3年级"},
+  {cat:"🏃",t:"体态矫正：足弓综合训练15min + 骨盆回正10min + 少女背15min"},  {cat:"🎧",t:"六级听力：2019年6月 第1套 Conversation One 精听+泛听",s:"四步法逐句精听"},
+  {cat:"📖",t:"阅读：川端康成·母亲的初恋"},
+  {cat:"⚖️",t:"称体重+量腰围臀围，记录起点数据"},
+    {cat:"🎨",t:"画画：抖抖村练习"},
+{cat:"✏️",t:"想法记录：五分钟"}
+]},
+3:{date:"7.30",wd:"周四",phase:"第一阶段 · 启动期",tasks:[  {cat:"📚",t:"文学史：第二章 殷商西周的书面散文",s:"甲骨文、铜器铭文、周易、尚书的文学要点；完成精修框架"},
+  {cat:"📖",t:"小学教材：数学 1-3年级"},
+  {cat:"🏃",t:"体态矫正：髋关节灵活度训练 + 骨盆回正10min + 直角肩15min"},  {cat:"🎧",t:"六级听力：2019年6月 第1套 Conversation One 跟读+泛听",s:"跟读模仿语音语调"},
+  {cat:"📖",t:"阅读：川端康成·水月"},
+    {cat:"🎨",t:"画画：K大课程练习"},
+{cat:"✏️",t:"想法记录：五分钟"}
+]},
+4:{date:"7.31",wd:"周五",phase:"第一阶段 · 启动期",tasks:[  {cat:"📚",t:"文学史：第三章 诗经",s:"风雅颂分类、赋比兴手法、重要篇目、文学史地位；完成精修框架"},
+  {cat:"📖",t:"小学教材：英语 1-3年级"},
+  {cat:"🏃",t:"体态矫正：核心稳定训练12min + 少女背15min"},  {cat:"🎧",t:"六级听力：2019年6月 第1套 Conversation Two 精听+泛听",s:"四步法逐句精听"},
+  {cat:"📖",t:"阅读：众神的样子"},
+    {cat:"🎨",t:"画画：抖抖村练习"},
+{cat:"✏️",t:"想法记录：五分钟"}
+]},
+5:{date:"8.1",wd:"周六",phase:"第一阶段 · 启动期",tasks:[  {cat:"📚",t:"文学史：第四章 左传与春秋战国历史散文",s:"左传叙事手法、国语与战国策特点；完成精修框架"},
+  {cat:"🏃",t:"体态矫正：足弓综合训练15min + 胸椎灵活度训练 + 直角肩15min"},  {cat:"🎧",t:"六级听力：2019年6月 第1套 Conversation Two 跟读+泛听",s:"跟读模仿语音语调"},
+  {cat:"📖",t:"阅读：众神的样子"},
+    {cat:"🔍",t:"考研：初步了解师范大学中文系考研方向"},
+{cat:"✏️",t:"想法记录：五分钟"}
+]},
+6:{date:"8.2",wd:"周日",phase:"第一阶段 · 启动期",tasks:[  {cat:"📚",t:"文学史：第五章 孟子庄子与春秋战国诸子散文",s:"孟子论辩特点、庄子寓言特色、诸子散文风格差异；完成精修框架"},
+  {cat:"🏃",t:"体态矫正：骨盆回正10min + 核心稳定训练 + 少女背15min"},  {cat:"🎧",t:"六级听力：2019年6月 第1套 Passage One 精听+泛听",s:"四步法逐句精听"},
+  {cat:"📖",t:"阅读：众神的样子"},
+    {cat:"🎨",t:"画画：自由练习"},
+{cat:"✏️",t:"想法记录：五分钟"}
+]},
+7:{date:"8.3",wd:"周一",phase:"第一阶段 · 启动期",hint:"第一阶段收尾",tasks:[  {cat:"📚",t:"文学史：第六章 屈原与楚辞赋",s:"楚辞体特征、《离骚》主旨与艺术手法、九歌九章天问、屈原文学地位及影响、宋玉辞赋；完成精修框架"},
+  {cat:"🏃",t:"体态矫正：综合复习（选本周感觉最需要的2-3个训练组合）"},  {cat:"🎧",t:"六级听力：2019年6月 第1套 Passage One 跟读+泛听",s:"跟读模仿语音语调"},
+  {cat:"📖",t:"阅读：川端康成·雪国（含千羽鹤）"},
+  {cat:"🔍",t:"考研调研：搜索目标师范大学中文系",s:"查：院校排名、考试科目、参考书目、报录比"},
+  {cat:"✏️",t:"想法记录：五分钟"}
+]},
+8:{date:"8.4",wd:"周二",phase:"第二阶段 · 加速期",tasks:[  {cat:"📚",t:"文学史：第二编绪论",s:"了解秦汉文学的整体背景与分期；完成精修框架"},
+  {cat:"📖",t:"小学教材：语文 4-6年级"},
+  {cat:"🏃",t:"体态矫正：重复第1周动作加量 + 真空腹呼吸8min"},  {cat:"🎧",t:"六级听力：2019年6月 第1套 Passage Two 精听+泛听",s:"四步法逐句精听"},
+  {cat:"📖",t:"阅读：川端康成·雪国（含千羽鹤）"},
+  {cat:"✏️",t:"想法记录：五分钟"}
+]},
+9:{date:"8.5",wd:"周三",phase:"第二阶段 · 加速期",tasks:[  {cat:"📚",t:"文学史：第一章 秦与西汉散文",s:"秦代散文、西汉前期/中期/后期散文代表作家与作品；完成精修框架"},
+  {cat:"📖",t:"小学教材：语文 4-6年级"},
+  {cat:"🏃",t:"体态矫正：加量 + 少女背/芭杆上肢交替"},  {cat:"🎧",t:"六级听力：2019年6月 第1套 Passage Two 跟读+泛听",s:"跟读模仿语音语调"},
+  {cat:"📖",t:"阅读：川端康成·雪国（含千羽鹤）"},
+    {cat:"🎨",t:"画画：抖抖村练习"},
+{cat:"✏️",t:"想法记录：五分钟"}
+]},
+10:{date:"8.6",wd:"周四",phase:"第二阶段 · 加速期",tasks:[  {cat:"📚",t:"文学史：第二章 西汉辞赋",s:"辞赋兴起、贾谊吊屈原赋、枚乘七发、司马相如及其他辞赋；完成精修框架"},
+  {cat:"📖",t:"小学教材：数学 4-6年级"},
+  {cat:"🏃",t:"体态矫正：加量 + 核心稳定训练"},  {cat:"🎧",t:"六级听力：2019年6月 第1套 Recording One 精听+泛听",s:"四步法逐句精听"},
+  {cat:"📖",t:"阅读：川端康成·雪国（含千羽鹤）"},
+    {cat:"🔍",t:"考研：浏览目标院校名单，初步筛选"},
+{cat:"✏️",t:"想法记录：五分钟"}
+]},
+11:{date:"8.7",wd:"周五",phase:"第二阶段 · 加速期",hint:"重点章，多花时间",tasks:[  {cat:"📚",t:"文学史：第三章 司马迁与史记",s:"重点章：详细标注司马迁生平、史记思想内涵与实录精神、艺术成就、文学史地位影响；完成精修框架"},
+  {cat:"📖",t:"小学教材：数学 4-6年级"},
+  {cat:"🏃",t:"体态矫正：芭杆上肢30min"},  {cat:"🎧",t:"六级听力：2019年6月 第1套 Recording One 跟读+泛听",s:"跟读模仿语音语调"},
+  {cat:"📖",t:"阅读：众神的战争"},
+    {cat:"🎨",t:"画画：K大课程练习"},
+{cat:"✏️",t:"想法记录：五分钟"}
+]},
+12:{date:"8.8",wd:"周六",phase:"第二阶段 · 加速期",tasks:[  {cat:"📚",t:"文学史：第四章 东汉辞赋",s:"东汉散体赋、班固张衡辞赋；完成精修框架"},
+  {cat:"📖",t:"小学教材：英语 4-6年级"},
+  {cat:"🏃",t:"体态矫正：少女背 + 真空腹呼吸"},  {cat:"🎧",t:"六级听力：2019年6月 第1套 Recording Two 精听+泛听",s:"四步法逐句精听"},
+  {cat:"📖",t:"阅读：众神的战争"},
+  {cat:"✏️",t:"想法记录：五分钟"}
+]},
+13:{date:"8.9",wd:"周日",phase:"第二阶段 · 加速期",tasks:[  {cat:"📚",t:"文学史：第五章 汉书及东汉其他散文",s:"汉书成书体例、思想与文学价值、其他史传散文、论说散文；完成精修框架"},
+  {cat:"📖",t:"小学教材：整理汇总三科知识点手册",s:"家教备课用"},
+  {cat:"🏃",t:"体态矫正：核心稳定 + 骨盆回正"},  {cat:"🎧",t:"六级听力：2019年6月 第1套 Recording Two 跟读+泛听",s:"跟读模仿语音语调"},
+  {cat:"📖",t:"阅读：众神的战争"},
+    {cat:"🎨",t:"画画：抖抖村练习"},
+{cat:"✏️",t:"想法记录：五分钟"}
+]},
+14:{date:"8.10",wd:"周一",phase:"第二阶段 · 加速期",hint:"第二阶段收尾",tasks:[  {cat:"📚",t:"文学史：第六章 汉代乐府诗",s:"乐府与乐府诗、情怀表达、叙事方法、继承传统；完成精修框架"},
+  {cat:"📖",t:"小学教材：整理汇总三科知识点手册",s:"家教备课用，收尾"},
+  {cat:"🏃",t:"体态矫正：综合体态训练"},  {cat:"🎧",t:"六级听力：2019年6月 第1套 Recording Three 精听+泛听",s:"四步法逐句精听"},
+  {cat:"📖",t:"阅读：众神的战争"},
+  {cat:"✏️",t:"想法记录：五分钟"}
+]},
+15:{date:"8.11",wd:"周二",phase:"第三阶段 · 核心期",tasks:[  {cat:"📚",t:"文学史：第七章 汉代文人诗",s:"楚声与西汉文人诗、五言诗形成、东汉文人诗、古诗十九首；完成精修框架"},
+  {cat:"🏃",t:"体态矫正：核心稳定训练30min + 沙漏腰15min"},  {cat:"🎧",t:"六级听力：2019年6月 第1套 Recording Three 跟读+泛听 + 本套复盘",s:"跟读模仿语音语调"},
+  {cat:"📖",t:"阅读：众神的战争"},
+    {cat:"🎨",t:"画画：抖抖村练习"},
+{cat:"✏️",t:"想法记录：五分钟"}
+]},
+16:{date:"8.12",wd:"周三",phase:"第三阶段 · 核心期",tasks:[  {cat:"📚",t:"文学史：第三编绪论",s:"了解魏晋南北朝文学的整体背景与分期；完成精修框架"},
+  {cat:"🏃",t:"体态矫正：胸椎灵活度 + 脊柱柔韧"},  {cat:"🎧",t:"六级听力：2019年6月 第2套 Conversation One 精听+泛听",s:"四步法逐句精听"},
+  {cat:"📖",t:"阅读：蛇结"},
+  {cat:"✏️",t:"想法记录：五分钟"}
+]},
+17:{date:"8.13",wd:"周四",phase:"第三阶段 · 核心期",hint:"重点章",tasks:[  {cat:"📚",t:"文学史：第一章 三国文学",s:"曹氏父子建安文学、阮籍嵇康正始文学、吴蜀文学；完成精修框架"},
+  {cat:"🏃",t:"体态矫正：骨盆回正 + 足弓热身 + 核心稳定"},  {cat:"🎧",t:"六级听力：2019年6月 第2套 Conversation One 跟读+泛听",s:"跟读模仿语音语调"},
+  {cat:"📖",t:"阅读：蛇结"},
+    {cat:"🎨",t:"画画：K大课程练习"},
+{cat:"✏️",t:"想法记录：五分钟"}
+]},
+18:{date:"8.14",wd:"周五",phase:"第三阶段 · 核心期",tasks:[  {cat:"📚",t:"文学史：第二章 两晋文学",s:"西晋张华傅玄陆机潘岳左思、东晋文学；完成精修框架"},
+  {cat:"🏃",t:"体态矫正：沙漏腰 + 芭杆上肢"},  {cat:"🎧",t:"六级听力：2019年6月 第2套 Conversation Two 精听+泛听",s:"四步法逐句精听"},
+  {cat:"🔍",t:"考研：确定2-3所目标师范院校"},
+  {cat:"📖",t:"阅读：蛇结"},
+  {cat:"✏️",t:"想法记录：五分钟"}
+]},
+19:{date:"8.15",wd:"周六",phase:"第三阶段 · 核心期",tasks:[  {cat:"📚",t:"文学史：第三章 陶渊明",s:"陶渊明生平思想、诗文艺术风格与文学地位；完成精修框架"},
+  {cat:"🏃",t:"体态矫正：核心稳定 + 有氧30min"},  {cat:"🎧",t:"六级听力：2019年6月 第2套 Conversation Two 跟读+泛听",s:"跟读模仿语音语调"},
+  {cat:"🔍",t:"考研：对比考试科目和参考书"},
+  {cat:"📖",t:"阅读：蛇结"},
+    {cat:"🔍",t:"考研：关注目标院校最新动态"},
+{cat:"✏️",t:"想法记录：五分钟"}
+]},
+20:{date:"8.16",wd:"周日",phase:"第三阶段 · 核心期",tasks:[  {cat:"📚",t:"文学史：第四章 南朝文学",s:"谢灵运山水诗、鲍照、谢朓永明体、梁代文学、宫体诗、骈俪文风、文选玉台新咏；完成精修框架"},
+  {cat:"🏃",t:"体态矫正：综合体态 + 有氧30min"},  {cat:"🎧",t:"六级听力：2019年6月 第2套 Passage One 精听+泛听",s:"四步法逐句精听"},
+  {cat:"🔍",t:"考研：确定最终目标院校"},
+  {cat:"📖",t:"阅读：蛇结"},
+  {cat:"✏️",t:"想法记录：五分钟"}
+]},
+21:{date:"8.17",wd:"周一",phase:"第三阶段 · 核心期",hint:"第三阶段收尾",tasks:[  {cat:"📚",t:"文学史：第五章 北朝文学",s:"北朝文学草创发展特征成就、庾信、南北朝乐府；完成精修框架"},
+  {cat:"🏃",t:"体态矫正：综合训练"},  {cat:"🎧",t:"六级听力：2019年6月 第2套 Passage One 跟读+泛听",s:"跟读模仿语音语调"},
+  {cat:"🔍",t:"考研：列出目标院校参考书目清单 + 制定复习范围"},
+  {cat:"📖",t:"阅读：蛇结"},
+  {cat:"✏️",t:"想法记录：五分钟"}
+]},
+22:{date:"8.18",wd:"周二",phase:"第四阶段 · 深入期",tasks:[  {cat:"📚",t:"文学史：第六章 魏晋南北朝小说",s:"小说产生类型、搜神记志怪、世说新语志人；完成精修框架"},
+  {cat:"🏃",t:"体态矫正：18天体态矫正课程 + 足弓骨盆热身 + 有氧30min"},  {cat:"🎧",t:"六级听力：2019年6月 第2套 Passage Two 精听+泛听",s:"四步法逐句精听"},
+  {cat:"📖",t:"阅读：蛇结"},
+    {cat:"🎨",t:"画画：抖抖村练习"},
+{cat:"✏️",t:"想法记录：五分钟"}
+]},
+23:{date:"8.19",wd:"周三",phase:"第四阶段 · 深入期",tasks:[  {cat:"📚",t:"文学史：第四编绪论",s:"了解隋唐五代文学的整体背景与分期；完成精修框架"},
+  {cat:"🏃",t:"体态矫正：18天体态矫正 + 有氧"},  {cat:"🎧",t:"六级听力：2019年6月 第2套 Passage Two 跟读+泛听",s:"跟读模仿语音语调"},
+  {cat:"📖",t:"阅读：赫索格"},
+  {cat:"✏️",t:"想法记录：五分钟"}
+]},
+24:{date:"8.20",wd:"周四",phase:"第四阶段 · 深入期",tasks:[  {cat:"📚",t:"文学史：第一章 隋及初唐文学",s:"宫廷文学、台阁体、文化工程、初唐四杰、陈子昂、张若虚诗歌创新；完成精修框架"},
+  {cat:"🏃",t:"体态矫正：18天体态矫正 + 有氧"},  {cat:"🎧",t:"六级听力：2019年6月 第2套 Recording One 精听+泛听",s:"四步法逐句精听"},
+  {cat:"📖",t:"阅读：赫索格"},
+  {cat:"✏️",t:"想法记录：五分钟"}
+]},
+25:{date:"8.21",wd:"周五",phase:"第四阶段 · 深入期",hint:"重点章",tasks:[  {cat:"📚",t:"文学史：第二章 盛唐诗坛",s:"孟浩然王维隐逸诗人群体、高适岑参边塞诗、京城诗人群；山水田园与边塞两大流派；完成精修框架"},
+  {cat:"🏃",t:"体态矫正：18天体态矫正 + 有氧"},  {cat:"🎧",t:"六级听力：2019年6月 第2套 Recording One 跟读+泛听",s:"跟读模仿语音语调"},
+  {cat:"📖",t:"阅读：赫索格"},
+    {cat:"🎨",t:"画画：K大课程练习"},
+{cat:"✏️",t:"想法记录：五分钟"}
+]},
+26:{date:"8.22",wd:"周六",phase:"第四阶段 · 深入期",hint:"重点章",tasks:[  {cat:"📚",t:"文学史：第三章 李白",s:"重点章：详细标注李白传奇经历思想、诗歌成就、文学地位影响；完成精修框架"},
+  {cat:"🏃",t:"体态矫正：18天体态矫正 + 有氧"},  {cat:"🎧",t:"六级听力：2019年6月 第2套 Recording Two 精听+泛听",s:"四步法逐句精听"},
+  {cat:"📖",t:"阅读：赫索格"},
+  {cat:"✏️",t:"想法记录：五分钟"}
+]},
+27:{date:"8.23",wd:"周日",phase:"第四阶段 · 深入期",tasks:[  {cat:"📚",t:"文学史：第四章 杜甫",s:"重点章：详细标注杜甫生平创作历程、诗歌艺术成就、文学特点影响；完成精修框架"},
+  {cat:"🏃",t:"体态矫正：18天体态矫正 + 有氧"},  {cat:"🎧",t:"六级听力：2019年6月 第2套 Recording Two 跟读+泛听",s:"跟读模仿语音语调"},
+  {cat:"📖",t:"阅读：赫索格"},
+  {cat:"✏️",t:"想法记录：五分钟"}
+]},
+28:{date:"8.24",wd:"周一",phase:"第四阶段 · 深入期",hint:"第四阶段收尾",tasks:[  {cat:"📚",t:"文学史：第五章 中唐诗坛",s:"大历贞元元和诗坛、韩愈孟郊、韩孟诗派其他、刘禹锡柳宗元；完成精修框架"},
+  {cat:"🏃",t:"体态矫正：综合训练"},  {cat:"🎧",t:"六级听力：2019年6月 第2套 Recording Three 精听+泛听",s:"四步法逐句精听"},
+  {cat:"📖",t:"阅读：赫索格"},
+    {cat:"🎨",t:"画画：自由练习"},
+{cat:"✏️",t:"想法记录：五分钟"}
+]},
+29:{date:"8.25",wd:"周二",phase:"第五阶段 · 冲刺期",tasks:[  {cat:"📚",t:"文学史：第六章 白居易元稹与元白诗派",s:"白居易讽谕诗新乐府、闲适诗、长恨歌、元白派诗人；完成精修框架"},
+  {cat:"🏃",t:"体态矫正：全身综合训练 + 有氧40min"},  {cat:"🎧",t:"六级听力：2019年6月 第2套 Recording Three 跟读+泛听 + 本套复盘",s:"跟读模仿语音语调"},
+  {cat:"📖",t:"阅读：赫索格"},
+  {cat:"✏️",t:"想法记录：五分钟"}
+]},
+30:{date:"8.26",wd:"周三",phase:"第五阶段 · 冲刺期",tasks:[  {cat:"📚",t:"文学史：第七章 古文思潮与唐文的成就",s:"古文运动背景韩柳理论、韩愈柳宗元古文、骈文新发展、晚唐小品文、唐文艺术成就；完成精修框架"},
+  {cat:"🏃",t:"体态矫正：全身综合 + 有氧40min"},  {cat:"🎧",t:"六级听力：2020年7月 第1套 Conversation One 精听+泛听",s:"四步法逐句精听"},
+  {cat:"📖",t:"阅读：阿加莎·斯泰尔斯庄园奇案"},
+  {cat:"✏️",t:"想法记录：五分钟"}
+]},
+31:{date:"8.27",wd:"周四",phase:"第五阶段 · 冲刺期",hint:"重点章",tasks:[  {cat:"📚",t:"文学史：第八章 传奇与敦煌文学",s:"唐传奇笔记小说、变文敦煌文学；完成精修框架"},
+  {cat:"🏃",t:"体态矫正：全身综合 + 有氧40min"},  {cat:"🎧",t:"六级听力：2020年7月 第1套 Conversation One 跟读+泛听",s:"跟读模仿语音语调"},
+  {cat:"📖",t:"阅读：阿加莎·首相绑架案"},
+    {cat:"🎨",t:"画画：抖抖村练习"},
+{cat:"✏️",t:"想法记录：五分钟"}
+]},
+32:{date:"8.28",wd:"周五",phase:"第五阶段 · 冲刺期",tasks:[  {cat:"📚",t:"文学史：第九章 晚唐五代诗坛",s:"杜牧李商隐、晚唐五代其他诗人；完成精修框架"},
+  {cat:"🏃",t:"体态矫正：全身综合 + 有氧40min"},  {cat:"🎧",t:"六级听力：2020年7月 第1套 Conversation Two 精听+泛听",s:"四步法逐句精听"},
+  {cat:"📖",t:"阅读：阿加莎·高尔夫球场命案"},
+  {cat:"✏️",t:"想法记录：五分钟"}
+]},
+33:{date:"8.29",wd:"周六",phase:"第五阶段 · 冲刺期",tasks:[  {cat:"📚",t:"文学史：第十章 词的兴起与晚唐五代词",s:"曲子词兴起、温庭筠花间词人、李煜南唐词人；完成精修框架"},
+  {cat:"🏃",t:"体态矫正：全身综合 + 有氧40min"},  {cat:"🎧",t:"六级听力：2020年7月 第1套 Conversation Two 跟读+泛听",s:"跟读模仿语音语调"},
+  {cat:"📖",t:"阅读：阿加莎·罗杰疑案"},
+    {cat:"🎨",t:"画画：K大课程练习"},
+{cat:"✏️",t:"想法记录：五分钟"}
+]},
+34:{date:"8.30",wd:"周日",phase:"第五阶段 · 冲刺期",tasks:[  {cat:"📚",t:"文学史：第五编绪论",s:"了解宋代文学的整体背景与分期；完成精修框架"},
+  {cat:"🏃",t:"体态矫正：全身综合 + 有氧30min"},  {cat:"🎧",t:"六级听力：2020年7月 第1套 Passage One 精听+泛听",s:"四步法逐句精听"},
+  {cat:"📖",t:"阅读：阿加莎·四魔头"},
+  {cat:"✏️",t:"想法记录：五分钟"}
+]},
+35:{date:"8.31",wd:"周一",phase:"第五阶段 · 冲刺期",hint:"第五阶段收尾",tasks:[  {cat:"📚",t:"文学史：第一章 北宋初期文学",s:"宋初文坛、宋初三体、王禹偁；完成精修框架"},
+  {cat:"🏃",t:"体态矫正：全身综合 + 有氧30min"},  {cat:"🎧",t:"六级听力：2020年7月 第1套 Passage One 跟读+泛听",s:"跟读模仿语音语调"},
+  {cat:"🎨",t:"画画：补之前落下的进度"},
+  {cat:"📖",t:"阅读：阿加莎·蓝色列车之谜"},
+  {cat:"✏️",t:"想法记录：五分钟"}
+]},
+36:{date:"9.1",wd:"周二",phase:"第六阶段 · 收尾期",tasks:[  {cat:"📚",t:"文学史：第二章 欧阳修与北宋诗文革新",s:"欧阳修文学思想与创作、苏舜钦梅尧臣、王安石曾巩；完成精修框架"},
+  {cat:"🏃",t:"体态矫正：全身综合 + 有氧30min"},  {cat:"🎧",t:"六级听力：2020年7月 第1套 Passage Two 精听+泛听",s:"四步法逐句精听"},
+  {cat:"📖",t:"阅读：阿加莎·黑咖啡"},
+  {cat:"✏️",t:"想法记录：五分钟"}
+]},
+37:{date:"9.2",wd:"周三",phase:"第六阶段 · 收尾期",tasks:[  {cat:"📚",t:"文学史：第三章 北宋前期词坛",s:"宋初词坛、柳永、晏殊欧阳修、张先及其他词人；完成精修框架"},
+  {cat:"🏃",t:"体态矫正：全身综合 + 有氧30min"},  {cat:"🎧",t:"六级听力：2020年7月 第1套 Passage Two 跟读+泛听",s:"跟读模仿语音语调"},
+  {cat:"📖",t:"阅读：阿加莎·悬崖山庄奇案"},
+    {cat:"🎨",t:"画画：自由练习"},
+{cat:"✏️",t:"想法记录：五分钟"}
+]},
+38:{date:"9.3",wd:"周四",phase:"第六阶段 · 收尾期",tasks:[  {cat:"📚",t:"文学史：第四章 苏轼",s:"重点章：详细标注苏轼思想文学主张、三苏文章、苏轼诗歌、苏轼词艺术成就；完成精修框架"},
+  {cat:"🏃",t:"体态矫正：全身综合 + 有氧30min"},  {cat:"🎧",t:"六级听力：2020年7月 第1套 Recording One 精听+泛听",s:"四步法逐句精听"},
+  {cat:"📖",t:"阅读：阿加莎·人性记录"},
+  {cat:"✏️",t:"想法记录：五分钟"}
+]},
+39:{date:"9.4",wd:"周五",phase:"第六阶段 · 收尾期",tasks:[  {cat:"📚",t:"文学史：第五章 北宋后期",s:"黄庭坚江西诗派、晁补之张耒、晏几道秦观贺铸、周邦彦；完成精修框架"},
+  {cat:"🏃",t:"体态矫正：全身综合 + 有氧30min"},  {cat:"🎧",t:"六级听力：2020年7月 第1套 Recording One 跟读+泛听",s:"跟读模仿语音语调"},
+  {cat:"📖",t:"阅读：阿加莎·东方快车谋杀案"},
+  {cat:"📝",t:"家教知识点手册定稿"},
+  {cat:"✏️",t:"想法记录：五分钟"}
+]},
+40:{date:"9.5",wd:"周六",phase:"第六阶段 · 收尾期",tasks:[
+  {cat:"📚",t:"文学史：第六章 南宋前期",s:"李清照、张元幹及其他爱国词人、陆游诗歌艺术、杨万里诚斋体、范成大田园诗、朱熹理学诗派；完成精修框架"},
+  {cat:"🏃",t:"体态矫正：全身综合 + 有氧30min"},
+  {cat:"🎧",t:"六级听力：2020年7月 第1套 Recording Two 精听+泛听",s:"四步法逐句精听"},
+  {cat:"📖",t:"阅读：阿加莎·三幕悲剧"},
+  {cat:"📝",t:"考研资料清单最终版"},
+  {cat:"✏️",t:"想法记录：五分钟"}
+]}};
+
+// ========== 工具函数 ==========
+const LS_PREFIX='dw_';
+function lsKey(k){return LS_PREFIX+k;}
+function lsGet(k,d){try{const v=localStorage.getItem(lsKey(k));return v?JSON.parse(v):d;}catch(e){return d;}}
+function lsSet(k,v){try{localStorage.setItem(lsKey(k),JSON.stringify(v));}catch(e){}}
+
+function getDayNum(){
+  const now=new Date();
+  const start=new Date(START);
+  start.setHours(5,0,0,0);
+  const elapsed=now-start;
+  const dayNum=Math.floor(elapsed/86400000)+1;
+  if(dayNum<1)return 1;
+  if(dayNum>40)return 40;
+  return dayNum;
+}
+
+function switchTab(t){
+  document.querySelectorAll('.tab').forEach(el=>el.classList.remove('active'));
+  document.querySelectorAll('.tab-content').forEach(el=>el.classList.remove('active'));
+  event.target.classList.add('active');
+  document.getElementById('tc-'+t).classList.add('active');
+}
+
+// ========== 渲染 ==========
+function renderToday(){
+  // 一次性修复：D1因边界调整丢失完成记录，仅补全D1
+  if(getDayNum()>=2){
+    const d1=lsGet('done_1',[]);
+    if(d1.length===0 && PLAN[1]){
+      lsSet('done_1',PLAN[1].tasks.map((_,idx)=>idx));
+    }
+  }
+  const d=getDayNum();
+  const info=PLAN[d];
+  if(!info)return;
+  document.getElementById('todayTitle').textContent='📌 D'+d+' · '+info.date+' '+info.wd;
+  document.getElementById('todayHint').textContent=info.hint||'';
+
+  const done=lsGet('done_'+d,[]);
+  const coDone=lsGet('co_done_'+d,[]);
+  const bd=document.getElementById('todayTasks');
+  bd.innerHTML='';
+
+  // 渲染当天任务
+  info.tasks.forEach((t,i)=>{
+    const div=document.createElement('div');
+    div.className='step'+(done.includes(i)?' done':'');
+    div.innerHTML='<div class="chk"></div><div class="stxt">'+(t.cat?t.cat+' ':'')+t.t+(t.s?'<span class="sub">'+t.s+'</span>':'')+'</div>';
+    div.onclick=function(){toggleTask(d,i,this);};
+    bd.appendChild(div);
+  });
+
+  // 自动顺延：收集之前所有天未完成的
+  // 通过任务内容匹配判断是否已在当天完成（处理边界调整导致的key错位）
+  const todayDone=lsGet('done_'+d,[]);
+  const todayTaskKeys=info.tasks.map(t=>t.t);
+  const todayDoneKeys=todayDone.map(i=>todayTaskKeys[i]||'');
+  let carryOvers=[];
+  for(let prev=1;prev<d;prev++){
+    const pInfo=PLAN[prev];
+    if(!pInfo)continue;
+    const prevDone=lsGet('done_'+prev,[]);
+    if(prevDone.length>=pInfo.tasks.length)continue; // 前一天全部完成，跳过
+    pInfo.tasks.forEach((t,idx)=>{
+      if(!prevDone.includes(idx)){
+        // 检查该任务是否已在今天的完成列表中（内容匹配）
+        if(todayDoneKeys.includes(t.t))return;
+        carryOvers.push({task:t,fromDay:prev,idx:idx});
+      }
+    });
+  }
+
+  if(carryOvers.length>0){
+    const secDiv=document.createElement('div');
+    secDiv.className='sec-title';
+    secDiv.textContent='📦 延期任务（'+carryOvers.length+'项）';
+    bd.appendChild(secDiv);
+    carryOvers.forEach((co,ci)=>{
+      const div=document.createElement('div');
+      const key=co.fromDay+'_'+co.idx;
+      div.className='step'+(coDone.includes(key)?' done':'');
+      const t=co.task;
+      div.innerHTML='<div class="chk"></div><div class="stxt">'+(t.cat?t.cat+' ':'')+'<span style="color:#e09015;font-size:11px;font-weight:600;">延期 </span>'+t.t+(t.s?'<span class="sub">'+t.s+'</span>':'')+'</div>';
+      div.onclick=function(){toggleCoTask(d,key,this);};
+      bd.appendChild(div);
+    });
+  }
+
+  // 统计
+  const total=info.tasks.length+carryOvers.length;
+  const doneN=done.length+coDone.length;
+  document.getElementById('sToday').textContent=doneN+'/'+total;
+
+  // 总进度
+  let allDone=0,allTotal=0;
+  for(let i=1;i<=40;i++){
+    allTotal+=PLAN[i].tasks.length;
+    allDone+=lsGet('done_'+i,[]).length;
+    allDone+=lsGet('co_done_'+i,[]).length;
+  }
+  document.getElementById('sTotal').textContent=Math.round(allDone/allTotal*100)+'%';
+
+  // 连续打卡
+  let streak=0;
+  const today=new Date();today.setHours(0,0,0,0);
+  for(let i=d;i>=1;i--){
+    const dd=lsGet('done_'+i,[]);
+    const co=lsGet('co_done_'+i,[]);
+    if(dd.length>0||co.length>0){streak++;}else{break;}
+  }
+  if(streak===0){
+    for(let i=d+1;i<=40;i++){
+      const dd=lsGet('done_'+i,[]);
+      const co=lsGet('co_done_'+i,[]);
+      if(dd.length>0||co.length>0){streak++;}else{break;}
+    }
+  }
+  document.getElementById('sStreak').textContent=streak;
+}
+
+function toggleTask(day,idx,el){
+  const done=lsGet('done_'+day,[]);
+  const p=done.indexOf(idx);
+  if(p>=0){done.splice(p,1);el.classList.remove('done');}
+  else{done.push(idx);el.classList.add('done');}
+  lsSet('done_'+day,done);
+  refreshStats(day);
+}
+
+function toggleCoTask(day,key,el){
+  const coDone=lsGet('co_done_'+day,[]);
+  const p=coDone.indexOf(key);
+  if(p>=0){coDone.splice(p,1);el.classList.remove('done');}
+  else{coDone.push(key);el.classList.add('done');}
+  lsSet('co_done_'+day,coDone);
+  refreshStats(day);
+}
+
+function refreshStats(day){
+  const d=getDayNum();
+  const info=PLAN[day];
+  // 计算延期任务数（与renderToday保持一致的内容匹配逻辑）
+  const todayDone=lsGet('done_'+d,[]);
+  const todayTaskKeys=info.tasks.map(t=>t.t);
+  const todayDoneKeys=todayDone.map(i=>todayTaskKeys[i]||'');
+  let coTotal=0;
+  for(let prev=1;prev<day;prev++){
+    const pInfo=PLAN[prev];
+    if(!pInfo)continue;
+    const prevDone=lsGet('done_'+prev,[]);
+    if(prevDone.length>=pInfo.tasks.length)continue;
+    pInfo.tasks.forEach((t,idx)=>{
+      if(!prevDone.includes(idx)){
+        if(todayDoneKeys.includes(t.t))return;
+        coTotal++;
+      }
+    });
+  }
+  const done=lsGet('done_'+day,[]);
+  const coDone=lsGet('co_done_'+day,[]);
+  const total=info.tasks.length+coTotal;
+  const doneN=done.length+coDone.length;
+  document.getElementById('sToday').textContent=doneN+'/'+total;
+  let allDone=0,allTotal=0;
+  for(let i=1;i<=40;i++){
+    allTotal+=PLAN[i].tasks.length;
+    allDone+=lsGet('done_'+i,[]).length;
+    allDone+=lsGet('co_done_'+i,[]).length;
+  }
+  document.getElementById('sTotal').textContent=Math.round(allDone/allTotal*100)+'%';
+  // 更新连续打卡
+  let streak=0;
+  for(let i=d;i>=1;i--){
+    const dd=lsGet('done_'+i,[]);
+    const co=lsGet('co_done_'+i,[]);
+    if(dd.length>0||co.length>0){streak++;}else{break;}
+  }
+  if(streak===0){
+    for(let i=d+1;i<=40;i++){
+      const dd=lsGet('done_'+i,[]);
+      const co=lsGet('co_done_'+i,[]);
+      if(dd.length>0||co.length>0){streak++;}else{break;}
+    }
+  }
+  document.getElementById('sStreak').textContent=streak;
+}
+
+function renderWeek(){
+  const d=getDayNum();
+  // 找到本周：周一到下周日
+  const today=new Date();
+  const dow=today.getDay()||7; // 周一=1
+  const mon=new Date(today);mon.setDate(today.getDate()-(dow-1));
+  const weekDays=[];
+  for(let i=0;i<7;i++){
+    const dt=new Date(mon);dt.setDate(mon.getDate()+i);
+    dt.setHours(5,0,0,0);
+    const dn=Math.floor((dt-START)/86400000)+1;
+    if(dn>=1&&dn<=40)weekDays.push(dn);
+  }
+  if(weekDays.length===0){document.getElementById('weekList').innerHTML='<div style="color:#aaa">当前不在计划范围内</div>';return;}
+
+  const first=PLAN[weekDays[0]],last=PLAN[weekDays[weekDays.length-1]];
+  document.getElementById('weekRange').textContent=first.date+'-'+last.date;
+
+  const cur=getDayNum();
+  let html='';
+  weekDays.forEach(dn=>{
+    const info=PLAN[dn];
+    if(!info)return;
+    const isToday=dn===cur;
+    const tasks=info.tasks.map(t=>t.cat+' '+t.t).join(' ｜ ');
+    html+='<div'+(isToday?' class="today"':'')+'><strong>D'+dn+' '+info.wd+(isToday?' ← 今天':'')+'</strong> '+tasks+'</div>';
+  });
+  document.getElementById('weekList').innerHTML=html;
+}
+
+function renderProgress(){
+  // 文学史进度
+  const chapters=[
+    {name:'上册·先秦文学',total:6,done:0},
+    {name:'上册·秦汉文学',total:7,done:0},
+    {name:'中册·魏晋南北朝',total:7,done:0},
+    {name:'中册·隋唐五代',total:7,done:0},
+    {name:'下册·宋代文学',total:7,done:0},
+    {name:'下册·元明清近代',total:6,done:0}
+  ];
+  // 根据已完成的D号估算
+  const d=getDayNum();
+  // 先秦D2-D6(5天,6章) → 秦汉D7复习+D8-D14
+  // 简化：按阶段估算进度
+  const litDays=[
+    {range:[2,6],ch:0},   // 先秦
+    {range:[7,7],ch:0},   // 先秦复习
+    {range:[8,14],ch:1},  // 秦汉
+    {range:[15,21],ch:2}, // 魏晋
+    {range:[22,28],ch:3}, // 隋唐
+    {range:[29,35],ch:4}, // 宋代
+    {range:[36,40],ch:5}  // 元明清
+  ];
+  litDays.forEach(l=>{
+    let done=0;
+    for(let i=l.range[0];i<=l.range[1];i++){
+      if(i<=d){
+        const dd=lsGet('done_'+i,[]);
+        if(dd.length>0)done++;
+      }
+    }
+    chapters[l.ch].done=Math.min(done,chapters[l.ch].total);
+  });
+  // 复习日算入上一阶段
+  chapters[0].done=Math.min(chapters[0].done,6);
+
+  let litHtml='';
+  chapters.forEach(c=>{
+    const pct=Math.round(c.done/c.total*100);
+    litHtml+='<div class="prog"><div class="prog-label">'+c.name+'</div><div class="prog-bar"><div class="fill" style="width:'+pct+'%"></div></div><div class="prog-info"><span>'+c.done+'/'+c.total+' 章</span><span>'+pct+'%</span></div></div>';
+  });
+  document.getElementById('litProgress').innerHTML=litHtml;
+
+  // 听力进度
+  const listenSets=[[2,8],[9,15],[16,22],[23,29],[30,36]];
+  let setsDone=0;
+  listenSets.forEach(s=>{
+    let allDone=true;
+    for(let i=s[0];i<=s[1];i++){
+      if(i>40||i<d){const dd=lsGet('done_'+i,[]);if(dd.length===0)allDone=false;}
+      else allDone=false;
+    }
+    if(allDone&&d>=s[1])setsDone++;
+  });
+  document.getElementById('listenFill').style.width=Math.round(setsDone/6*100)+'%';
+  document.getElementById('listenInfo').textContent=setsDone+'/6 套';
+
+  // 体重记录
+  renderWeight();
+}
+
+// ========== 体重记录 ==========
+function renderWeight(){
+  const logs=lsGet('weights',[]);
+  const el=document.getElementById('weightLog');
+  if(logs.length===0){el.textContent='还没有记录';return;}
+  el.innerHTML=logs.slice().reverse().map(l=>'<div>'+l.date+'：'+l.val+'斤</div>').join('');
+}
+function saveWeight(){
+  const input=document.getElementById('weightInput');
+  const val=input.value.trim();
+  if(!val)return;
+  const logs=lsGet('weights',[]);
+  const now=new Date();
+  logs.push({date:(now.getMonth()+1)+'.'+now.getDate(),val:val});
+  lsSet('weights',logs);
+  input.value='';
+  renderWeight();
+}
+
+// ========== 时间 ==========
+function updateTime(){
+  const now=new Date();
+  const days=['星期日','星期一','星期二','星期三','星期四','星期五','星期六'];
+  const y=now.getFullYear(),m=now.getMonth()+1,d=now.getDate();
+  const h=String(now.getHours()).padStart(2,'0'),min=String(now.getMinutes()).padStart(2,'0');
+  document.getElementById('curDate').textContent=y+'年'+m+'月'+d+'日 '+days[now.getDay()];
+  document.getElementById('curTime').textContent=h+':'+min;
+}
+
+// ========== 阶段条 ==========
+function renderPhase(){
+  const d=getDayNum();
+  const info=PLAN[d];
+  if(!info)return;
+  document.getElementById('phaseName').textContent=info.phase;
+  document.getElementById('phaseDays').textContent=info.date+' · D'+d;
+}
+
+// ========== 自动刷新：检测日切换并重新渲染 ==========
+let currentDayNum = getDayNum();
+
+function renderAll(){
+  renderPhase();
+  renderToday();
+  renderWeek();
+  renderProgress();
+}
+
+function checkDayChange(){
+  const newDay = getDayNum();
+  if(newDay !== currentDayNum){
+    currentDayNum = newDay;
+    renderAll();
+  }
+}
+
+// ========== 初始化 ==========
+updateTime();
+setInterval(updateTime, 60000);
+setInterval(checkDayChange, 5 * 60 * 1000); // 每5分钟检测一次日切换
+renderAll();
+</script>
+</body>
+</html>
