@@ -188,8 +188,9 @@ body{font-family:-apple-system,"PingFang SC","Hiragino Sans GB","Microsoft YaHei
 <div class="footer">🫛 豌豆工作台 · 数据保存在本地</div>
 
 <script>
-// ========== 40天完整任务数据 ==========
+// ========== 41天完整任务数据 ==========
 const START=new Date(2026,6,28); // 7月22日
+const DATA_VERSION=3; // 每次PLAN结构变化时+1，自动清理旧localStorage数据
 const PLAN={
 1:{date:"7.28",wd:"周二",phase:"第一阶段 · 启动期",hint:"今天只做两件事",tasks:[
   {cat:"🎧",t:"打开扇贝听力口语 → 四六级 → 随便找一段六级听力听一遍",s:"用精听模式试试，感受难度，不用在意对错"},
@@ -841,6 +842,20 @@ function checkDayChange(){
     renderAll();
   }
 }
+
+// ========== 数据版本检查 ==========
+(function checkDataVersion(){
+  const savedVer=parseInt(localStorage.getItem('dw_data_version')||'0');
+  if(savedVer!==DATA_VERSION){
+    // PLAN结构变了，清理所有旧的完成记录
+    for(let i=0;i<localStorage.length;i++){
+      const k=localStorage.key(i);
+      if(k&&k.startsWith('dw_done_'))localStorage.removeItem(k);
+      if(k&&k.startsWith('dw_co_done_'))localStorage.removeItem(k);
+    }
+    localStorage.setItem('dw_data_version',String(DATA_VERSION));
+  }
+})();
 
 // ========== 初始化 ==========
 updateTime();
