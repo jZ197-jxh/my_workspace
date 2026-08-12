@@ -1,0 +1,123 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1.0,maximum-scale=1.0,user-scalable=no">
+<title>Widget - 日程提醒</title>
+<style>
+:root{--red:#E74C3C;--red-light:#FF6B6B;--red-dark:#C0392B;--red-bg:#FFF5F5;--red-bg2:#FFE8E8;--text:#2D2D2D;--text2:#666;--text3:#999;--white:#FFF;--card-bg:#FFF;--border:#FFD6D6}
+*{margin:0;padding:0;box-sizing:border-box}
+body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;background:var(--red-bg);color:var(--text);overflow:hidden;height:100vh;display:flex;align-items:center;justify-content:center;padding:12px}
+.widget{background:var(--card-bg);border-radius:16px;border:1.5px solid var(--border);width:100%;max-width:400px;padding:16px 18px;box-shadow:0 2px 12px rgba(231,76,60,.08)}
+.top{display:flex;align-items:center;justify-content:space-between;margin-bottom:14px}
+.date-main{font-size:26px;font-weight:800;color:var(--red);letter-spacing:-0.5px}
+.date-sub{font-size:12px;color:var(--text3);margin-top:2px}
+.d-badge{background:linear-gradient(135deg,var(--red),var(--red-dark));color:var(--white);font-size:13px;font-weight:700;padding:5px 12px;border-radius:20px;white-space:nowrap}
+.stage{display:flex;align-items:center;gap:8px;margin-bottom:14px}
+.stage-name{font-size:13px;font-weight:600;color:var(--red-dark)}
+.stage-dot{width:6px;height:6px;border-radius:50%;background:var(--red-light)}
+.countdown{font-size:12px;color:var(--text3);margin-left:auto}
+.divider{height:1px;background:var(--border);margin:12px 0}
+.info-row{display:flex;align-items:center;gap:8px;margin-bottom:8px}
+.info-icon{width:20px;height:20px;border-radius:6px;background:var(--red-bg2);display:flex;align-items:center;justify-content:center;font-size:11px}
+.info-text{font-size:13px;color:var(--text2);flex:1}
+.info-text strong{color:var(--text);font-weight:600}
+.motivation{background:var(--red-bg);border-radius:10px;padding:10px 14px;margin-top:12px;border-left:3px solid var(--red)}
+.motivation p{font-size:12px;color:var(--red-dark);line-height:1.5;font-weight:500}
+.footer{text-align:center;margin-top:14px}
+.footer a{font-size:11px;color:var(--red-light);text-decoration:none;font-weight:500}
+</style>
+</head>
+<body>
+<div class="widget">
+  <div class="top">
+    <div>
+      <div class="date-main" id="dateMain">--</div>
+      <div class="date-sub" id="dateSub">--</div>
+    </div>
+    <div class="d-badge" id="dBadge">D--</div>
+  </div>
+  <div class="stage">
+    <span class="stage-dot"></span>
+    <span class="stage-name" id="stageName">--</span>
+    <span class="countdown" id="countdown">--</span>
+  </div>
+  <div class="divider"></div>
+  <div class="info-row">
+    <div class="info-icon">📋</div>
+    <div class="info-text">今日计划 <strong id="taskCount">--</strong> 项任务</div>
+  </div>
+  <div class="info-row">
+    <div class="info-icon">📅</div>
+    <div class="info-text">已坚持 <strong id="dayCount">--</strong> 天</div>
+  </div>
+  <div class="motivation">
+    <p id="quote">--</p>
+  </div>
+  <div class="footer">
+    <a href="https://jz197-jxh.github.io/my_workspace/" target="_blank">点击打开完整工作台 →</a>
+  </div>
+</div>
+<script>
+const START=new Date(2026,7,13);
+const END=new Date(2026,8,21);
+const TOTAL_DAYS=40;
+const WEEKDAYS=['日','一','二','三','四','五','六'];
+const STAGES=[
+  {name:'第一阶段 · 启动期',end:13},
+  {name:'第二阶段 · 攻坚期',end:27},
+  {name:'第三阶段 · 冲刺期',end:40}
+];
+const QUOTES=[
+  '今天的努力，是明天的底气 💪',
+  '坚持就是胜利，冲鸭！🔥',
+  '每一分钟都不辜负 ✨',
+  '自律即自由，继续加油 🚀',
+  '把不可能变成可能 💎',
+  '今天也要元气满满 🌟',
+  '一步一个脚印，稳稳的 🎯'
+];
+function getNewDay(now){
+  const d=now||new Date();
+  const h=d.getHours();
+  const adj=h<5?new Date(d.getTime()-864e5):d;
+  return new Date(adj.getFullYear(),adj.getMonth(),adj.getDate());
+}
+function calcDay(today){
+  const diff=Math.floor((today-START)/864e5)+1;
+  return Math.max(1,Math.min(diff,TOTAL_DAYS));
+}
+function getStage(day){
+  for(const s of STAGES){if(day<=s.end)return s.name;}
+  return STAGES[STAGES.length-1].name;
+}
+function getTaskCount(day){
+  if(day>=1&&day<=5)return 3;
+  if(day>=6&&day<=10)return 4;
+  if(day>=11&&day<=15)return 5;
+  if(day>=16&&day<=20)return 6;
+  if(day>=21&&day<=30)return 7;
+  if(day>=31&&day<=35)return 6;
+  return 5;
+}
+function init(){
+  const now=new Date();
+  const today=getNewDay(now);
+  const day=calcDay(today);
+  const remain=Math.max(0,TOTAL_DAYS-day);
+  const m=today.getMonth()+1;
+  const d=today.getDate();
+  const wd=WEEKDAYS[today.getDay()];
+  document.getElementById('dateMain').textContent=m+'月'+d+'日';
+  document.getElementById('dateSub').textContent='星期'+wd;
+  document.getElementById('dBadge').textContent='D'+day;
+  document.getElementById('stageName').textContent=getStage(day);
+  document.getElementById('countdown').textContent='剩余'+remain+'天';
+  document.getElementById('taskCount').textContent=getTaskCount(day);
+  document.getElementById('dayCount').textContent=day;
+  document.getElementById('quote').textContent=QUOTES[day%QUOTES.length];
+}
+init();
+</script>
+</body>
+</html>
