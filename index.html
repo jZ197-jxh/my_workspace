@@ -249,7 +249,7 @@ body{font-family:-apple-system,"PingFang SC","Hiragino Sans GB","Microsoft YaHei
 // ========== 41天完整任务数据 ==========
 const START=new Date(2026,7,13);
 const RPLAN=[{n:'《蛇结》',d:4,p:380},{n:'《赫索格》',d:11,p:979},{n:'《我弥留之际》',d:5,p:447}];
-const DATA_VERSION=103;
+const DATA_VERSION=104;
 const PLAN={
 1:{date:"8.13",wd:"周四",phase:"第一阶段 · 启动期",hint:"正式进入节奏",tasks:[
   {cat:"📚",t:"文学史",s:"总绪论"},
@@ -654,7 +654,7 @@ function renderLevelBar(){
 // ========== 目标系统 ==========
 const DEFAULT_GOALS=[
   {id:'lit',name:'📚 文学史',emoji:'📚',total:84,unit:'章',ppt:2,deadline:'2026-11-15',hasRest:true,done:0,streak:0,lastDate:''},
-  {id:'reading',name:'📕 阅读',emoji:'📕',total:1806,unit:'页',ppt:1,deadline:'2026-09-01',hasRest:false,done:0,streak:0,lastDate:''},
+  {id:'reading',name:'📕 阅读',emoji:'📕',total:1806,unit:'页',ppt:0.1,deadline:'2026-09-01',hasRest:false,done:0,streak:0,lastDate:''},
   {id:'draw',name:'🎨 画画',emoji:'🎨',total:274,unit:'节',ppt:1,deadline:'2027-12-05',hasRest:false,done:0,streak:0,lastDate:''},
   {id:'exam',name:'📝 考研规划',emoji:'📝',total:4,unit:'步骤',ppt:5,deadline:'2026-09-04',hasRest:false,done:0,streak:0,lastDate:''},
   {id:'listen',name:'🎧 六级听力',emoji:'🎧',total:99999,unit:'天',ppt:1,deadline:'',hasRest:false,done:0,streak:0,lastDate:''},
@@ -689,23 +689,30 @@ function computeInitialGoalProgress(goals){
       else if(t.cat==='🏃')postureCount++;
       else if(t.cat==='🖥️')ncreCount++;
       else if(t.cat==='🗣️')pthCount++;
+      else if(t.cat==='📝')examCount++;
     });
   }
   // Read tasks: count 📖 tasks that are actual reading (not 小学教材)
+  const readingBooks=[{name:'蛇结',pages:380,days:4},{name:'赫索格',pages:979,days:11},{name:'我弥留之际',pages:447,days:5}];
   for(let i=1;i<=40;i++){
     const info=PLAN[i];if(!info)continue;
     const done=lsGet('done_'+i,[]);
     done.forEach(idx=>{
       if(idx>=info.tasks.length)return;
       const t=info.tasks[idx];
-      if(t.cat==='📕'&&isReadingTask(t.t))readTasks++;
+      if(t.cat==='📕'&&isReadingTask(t.t)){
+        // Calculate actual pages from bi/bd
+        if(typeof t.bi==='number'&&typeof t.bd==='number'&&readingBooks[t.bi]){
+          readTasks+=Math.ceil(readingBooks[t.bi].pages/readingBooks[t.bi].days);
+        }
+      }
       if(t.cat==='🎨')drawTasks++;
     });
   }
 
   goals.forEach(g=>{
     if(g.id==='lit')g.done=litCount;
-    if(g.id==='reading')g.done=readTasks*1; // default 1 page per reading click
+    if(g.id==='reading')g.done=readTasks; // actual pages read
     if(g.id==='draw')g.done=drawTasks*3; // default 3 sessions per drawing task
     if(g.id==='listen')g.done=listenCount;
     if(g.id==='posture')g.done=postureCount;
@@ -925,7 +932,17 @@ function linkTaskToGoal(task){
   if(cat==='📚'){
     goalCheckIn('lit',1);
   }else if(cat==='📕'&&isReadingTask(t)){
-    goalCheckIn('reading',1);
+    // Calculate actual pages for this reading task
+    const books=[{name:'蛇结',pages:380},{name:'赫索格',pages:979},{name:'我弥留之际',pages:447}];
+    let pages=1;
+    if(typeof t.bi==='number'&&typeof t.bd==='number'&&books[t.bi]){
+      const book=books[t.bi];
+      pages=Math.ceil(book.pages/4); // 蛇结4天，赫索格11天，我弥留之际5天
+      if(t.bi===0)pages=Math.ceil(380/4);
+      else if(t.bi===1)pages=Math.ceil(979/11);
+      else if(t.bi===2)pages=Math.ceil(447/5);
+    }
+    goalCheckIn('reading',pages);
   }else if(cat==='🎨'){
     goalCheckIn('draw',3);
   }else if(cat==='🎧'){
