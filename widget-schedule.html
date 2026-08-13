@@ -150,11 +150,31 @@ function render(){
   document.getElementById('dBadge').textContent='D'+day;
   document.getElementById('dateSub').textContent='星期'+wd;
   
-  const checked=lsGet('checked_D'+day,[]);
+  // 与主工作台保持一致：用 done_{day} 和 co_done_{day}
+  const checked=lsGet('done_'+day,[]);
+  const coChecked=lsGet('co_done_'+day,[]);
   const tasks=info.tasks;
-  const total=tasks.length;
-  const done=checked.length;
-  
+  const todayTaskKeys=tasks.map(t=>t.t);
+  const todayDoneKeys=checked.map(i=>todayTaskKeys[i]||'');
+
+  // 收集延期任务
+  let carryOvers=[];
+  for(let prev=1;prev<day;prev++){
+    const pInfo=PLAN[prev];
+    if(!pInfo)continue;
+    const prevDone=lsGet('done_'+prev,[]);
+    if(prevDone.length>=pInfo.tasks.length)continue;
+    pInfo.tasks.forEach((t,idx)=>{
+      if(!prevDone.includes(idx)){
+        if(todayDoneKeys.includes(t.t))return;
+        carryOvers.push({task:t,fromDay:prev,idx:idx});
+      }
+    });
+  }
+
+  const total=tasks.length+carryOvers.length;
+  const done=checked.length+coChecked.length;
+
   let html='<div class="task-list">';
   tasks.forEach((t,i)=>{
     const isChecked=checked.includes(i);
@@ -165,12 +185,26 @@ function render(){
       <div class="checkbox"></div>
     </div>`;
   });
+
+  if(carryOvers.length>0){
+    html+='<div style="font-size:11px;font-weight:600;color:var(--text3);padding:6px 6px 2px;letter-spacing:.3px">📦 延期任务（'+carryOvers.length+'项）</div>';
+    carryOvers.forEach((co)=>{
+      const key=co.fromDay+'_'+co.idx;
+      const isChecked=coChecked.includes(key);
+      const title=getTaskTitle(co.task);
+      html+=`<div class="task-item ${isChecked?'checked':''}" onclick="toggleCoTask('${key}')">
+        <div class="task-emoji">${co.task.cat}</div>
+        <div class="task-text"><span style="color:#e09015;font-size:11px;font-weight:600">延期 </span>${title}</div>
+        <div class="checkbox"></div>
+      </div>`;
+    });
+  }
   html+='</div>';
-  
+
   if(done===total&&total>0){
     html+='<div class="celebration"><div class="celebration-text">🎉 今日任务全部完成！太棒啦！</div></div>';
   }
-  
+
   html+=`<div class="footer">
     <div class="progress-row">
       <div class="progress-label">进度</div>
@@ -179,7 +213,7 @@ function render(){
     </div>
     <div class="footer-link"><a href="https://jz197-jxh.github.io/my_workspace/" target="_blank">打开主工作台 →</a></div>
   </div>`;
-  
+
   document.getElementById('content').innerHTML=html;
 }
 
@@ -187,14 +221,29 @@ function toggleTask(idx){
   const now=new Date();
   const today=getNewDay(now);
   const day=calcDay(today);
-  const checked=lsGet('checked_D'+day,[]);
+  const checked=lsGet('done_'+day,[]);
   const pos=checked.indexOf(idx);
   if(pos===-1){
     checked.push(idx);
   }else{
     checked.splice(pos,1);
   }
-  lsSet('checked_D'+day,checked);
+  lsSet('done_'+day,checked);
+  render();
+}
+
+function toggleCoTask(key){
+  const now=new Date();
+  const today=getNewDay(now);
+  const day=calcDay(today);
+  const coChecked=lsGet('co_done_'+day,[]);
+  const pos=coChecked.indexOf(key);
+  if(pos===-1){
+    coChecked.push(key);
+  }else{
+    coChecked.splice(pos,1);
+  }
+  lsSet('co_done_'+day,coChecked);
   render();
 }
 
