@@ -1006,8 +1006,8 @@ if(t.bi!==undefined){const bk=RPLAN[t.bi];const ppd=Math.ceil(bk.p/bk.d);const s
   });
 
   const todayDone=lsGet('done_'+d,[]);
-  const todayTaskKeys=info.tasks.map(t=>t.t);
-  const todayDoneKeys=todayDone.map(i=>todayTaskKeys[i]||'');
+  const todayTaskFullKeys=info.tasks.map(t=>(t.t||'')+(t.s||'')+(t.bi!==undefined?'_'+t.bi+'_'+t.bd:''));
+  const todayDoneFullKeys=todayDone.map(i=>todayTaskFullKeys[i]||'');
   let carryOvers=[];
   for(let prev=1;prev<d;prev++){
     const pInfo=PLAN[prev];
@@ -1016,7 +1016,8 @@ if(t.bi!==undefined){const bk=RPLAN[t.bi];const ppd=Math.ceil(bk.p/bk.d);const s
     if(prevDone.length>=pInfo.tasks.length)continue;
     pInfo.tasks.forEach((t,idx)=>{
       if(!prevDone.includes(idx)){
-        if(todayDoneKeys.includes(t.t))return;
+        const taskFullKey=(t.t||'')+(t.s||'')+(t.bi!==undefined?'_'+t.bi+'_'+t.bd:'');
+        if(todayDoneFullKeys.includes(taskFullKey))return;
         carryOvers.push({task:t,fromDay:prev,idx:idx});
       }
     });
