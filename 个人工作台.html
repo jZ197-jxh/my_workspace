@@ -1,0 +1,1357 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta http-equiv="Cache-Control" content="no-cache, no-store, must-rebaseline">
+<meta http-equiv="Pragma" content="no-cache">
+<meta http-equiv="Expires" content="0">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+<title>豆 · 工作台</title>
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="豆">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="theme-color" content="#9AB99C">
+<meta name="application-name" content="豆">
+<meta name="apple-touch-fullscreen" content="yes">
+<link rel="manifest" href='data:application/manifest+json,{"name":"豆 · 工作台","short_name":"豆","start_url":".","display":"standalone","background_color":"%23f5f7f3","theme_color":"%239AB99C","icons":[{"src":"data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSI1MTIiIGhlaWdodD0iNTEyIiB2aWV3Qm94PSIwIDAgNTEyIDUxMiI+CiAgPHJlY3Qgd2lkdGg9IjUxMiIgaGVpZ2h0PSI1MTIiIHJ4PSI5NiIgZmlsbD0iI0E4QzdBMCIvPgogIDx0ZXh0IHg9IjI1NiIgeT0iMjcwIiBmb250LWZhbWlseT0ic2Fucy1zZXJpZiIgZm9udC1zaXplPSIyMjAiIGZvbnQtd2VpZ2h0PSIzMDAiIGZpbGw9IndoaXRlIiB0ZXh0LWFuY2hvcj0ibWlkZGxlIiBkb21pbmFudC1iYXNlbGluZT0iY2VudHJhbCI+6LGGPC90ZXh0Pgo8L3N2Zz4=","sizes":"512x512","type":"image/svg+xml"}]}'>
+<link rel="apple-touch-icon" href='data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSI1MTIiIGhlaWdodD0iNTEyIiB2aWV3Qm94PSIwIDAgNTEyIDUxMiI+CiAgPHJlY3Qgd2lkdGg9IjUxMiIgaGVpZ2h0PSI1MTIiIHJ4PSI5NiIgZmlsbD0iI0E4QzdBMCIvPgogIDx0ZXh0IHg9IjI1NiIgeT0iMjcwIiBmb250LWZhbWlseT0ic2Fucy1zZXJpZiIgZm9udC1zaXplPSIyMjAiIGZvbnQtd2VpZ2h0PSIzMDAiIGZpbGw9IndoaXRlIiB0ZXh0LWFuY2hvcj0ibWlkZGxlIiBkb21pbmFudC1iYXNlbGluZT0iY2VudHJhbCI+6LGGPC90ZXh0Pgo8L3N2Zz4='>
+<style>
+:root{--green:#9AB99C;--green-light:#B5CFBA;--green-bg:#f0f5f0;--card:#fff;--bg:#f5f7f3;--text:#333;--text2:#555;--text3:#888;--text4:#bbb;--border:#eee;}
+*{margin:0;padding:0;box-sizing:border-box;}
+body{font-family:-apple-system,"PingFang SC","Hiragino Sans GB","Microsoft YaHei",sans-serif;background:var(--bg);color:var(--text);min-height:100vh;-webkit-tap-highlight-color:transparent;}
+.header{background:linear-gradient(135deg,var(--green),var(--green-light));padding:20px 16px 16px;color:#fff;display:flex;justify-content:space-between;align-items:flex-start;transition:background .5s;}
+.header h1{font-size:20px;font-weight:600;letter-spacing:1px;}
+.header .motto{font-size:12px;opacity:.8;margin-top:4px;}
+.header .date{text-align:right;font-size:13px;opacity:.9;}
+.header .date small{font-size:11px;opacity:.7;display:block;margin-top:2px;}
+.container{max-width:520px;margin:0 auto;padding:12px;}
+.phase{background:var(--card);border-radius:12px;padding:14px 16px;margin-bottom:10px;box-shadow:0 1px 3px rgba(0,0,0,.05);display:flex;justify-content:space-between;align-items:center;}
+.phase .name{font-size:15px;font-weight:600;color:var(--green);}
+.phase .days{font-size:12px;color:var(--text3);}
+.stats{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-bottom:10px;}
+.stat{background:var(--card);border-radius:10px;padding:12px 8px;text-align:center;box-shadow:0 1px 3px rgba(0,0,0,.05);}
+.stat .num{font-size:22px;font-weight:700;color:var(--green);}
+.stat .desc{font-size:11px;color:var(--text3);margin-top:2px;}
+.card{background:var(--card);border-radius:12px;overflow:hidden;box-shadow:0 1px 3px rgba(0,0,0,.05);margin-bottom:10px;}
+.card-hd{padding:13px 16px;border-bottom:1px solid var(--border);display:flex;justify-content:space-between;align-items:center;}
+.card-hd h2{font-size:15px;font-weight:600;}
+.card-hd .hint{font-size:12px;color:var(--text3);}
+.card-bd{padding:10px 14px 14px;}
+.step{display:flex;align-items:flex-start;gap:10px;padding:10px 8px;border-radius:8px;margin-bottom:2px;cursor:pointer;transition:background .15s;-webkit-user-select:none;user-select:none;}
+.step:active{background:#f0f0f0;}
+.chk{width:22px;height:22px;border:2px solid #d0d0d0;border-radius:50%;flex-shrink:0;margin-top:0;display:flex;align-items:center;justify-content:center;transition:all .15s;}
+.step.done .chk{background:var(--green);border-color:var(--green);}
+.step.done .chk::after{content:"✓";color:#fff;font-size:12px;font-weight:700;}
+.step.done .stxt{color:var(--text4);text-decoration:line-through;}
+.stxt{font-size:13.5px;line-height:1.55;flex:1;}
+.stxt .sub{font-size:12px;color:var(--text3);display:block;margin-top:2px;}
+.sec-title{font-size:12px;font-weight:600;color:var(--text3);padding:8px 8px 4px;margin-top:6px;text-transform:uppercase;letter-spacing:.5px;}
+.sec-title:first-child{margin-top:0;}
+.week-list{font-size:12.5px;line-height:1.85;color:var(--text2);padding-left:4px;}
+.week-list .today{background:var(--green-bg);border-radius:6px;padding:2px 6px;margin:0 -6px;}
+.week-list .today strong{color:var(--green);}
+.prog{padding:8px 0;}
+.prog-label{font-size:12px;color:var(--text3);margin-bottom:4px;}
+.prog-bar{height:6px;background:#eee;border-radius:3px;overflow:hidden;}
+.prog-bar .fill{height:100%;border-radius:3px;background:linear-gradient(90deg,var(--green),var(--green-light));transition:width .4s;}
+.prog-info{display:flex;justify-content:space-between;font-size:11px;color:var(--text3);margin-top:3px;}
+.weight-row{display:flex;gap:8px;align-items:center;padding:4px 0;}
+.weight-row input{flex:1;padding:7px 10px;border:1px solid #e0e0e0;border-radius:8px;font-size:14px;outline:none;transition:border .2s;}
+.weight-row input:focus{border-color:var(--green);}
+.weight-row button{padding:7px 14px;background:var(--green);color:#fff;border:none;border-radius:8px;font-size:13px;cursor:pointer;white-space:nowrap;}
+.footer{text-align:center;padding:20px 0;color:#ccc;font-size:11px;}
+::-webkit-scrollbar{width:0;height:0;}
+.tabs{display:flex;gap:0;margin-bottom:10px;background:var(--card);border-radius:10px;overflow:hidden;box-shadow:0 1px 3px rgba(0,0,0,.05);}
+.tab{flex:1;text-align:center;padding:10px 0;font-size:12px;font-weight:500;color:var(--text3);cursor:pointer;transition:all .2s;border-bottom:2px solid transparent;white-space:nowrap;}
+.tab.active{color:var(--green);border-bottom-color:var(--green);background:var(--green-bg);}
+.tab-content{display:none;}
+.tab-content.active{display:block;}
+.book-row{padding:6px 0;}
+.book-label{font-size:12px;color:var(--text3);margin-bottom:5px;}
+.books{display:flex;flex-wrap:wrap;gap:5px;}
+.book{font-size:11px;padding:3px 8px;border-radius:6px;background:#f0f0f0;color:#666;}
+.book.cur{background:#e6f7ff;color:#1890ff;border:1px solid #1890ff;}
+.book.ok{background:var(--green-bg);color:var(--green);text-decoration:line-through;}
+
+/* === 新增：等级进度条 === */
+.level-bar{background:var(--card);border-radius:12px;padding:14px 16px;margin-bottom:10px;box-shadow:0 1px 3px rgba(0,0,0,.05);}
+.lv-top{display:flex;justify-content:space-between;align-items:center;margin-bottom:8px;}
+.lv-name{font-size:14px;font-weight:600;color:var(--text);}
+.lv-pts{font-size:12px;color:var(--text3);}
+.lv-bar{height:8px;background:#eee;border-radius:4px;overflow:hidden;}
+.lv-bar .fill{height:100%;border-radius:4px;background:linear-gradient(90deg,var(--green),var(--green-light));transition:width .4s;}
+.lv-next{font-size:11px;color:var(--text3);margin-top:4px;text-align:right;}
+
+/* === 新增：目标卡片 === */
+.goal-card{background:var(--card);border-radius:12px;padding:14px;margin-bottom:10px;box-shadow:0 1px 3px rgba(0,0,0,.05);}
+.goal-hd{display:flex;justify-content:space-between;align-items:center;margin-bottom:8px;}
+.goal-name{font-size:14px;font-weight:600;}
+.goal-streak{font-size:11px;color:#FF6B35;background:#FFF3E0;padding:2px 6px;border-radius:10px;}
+.goal-stats{display:flex;justify-content:space-between;font-size:12px;color:var(--text2);margin-bottom:6px;}
+.goal-daily{font-size:11px;color:var(--text3);margin-bottom:8px;padding:4px 8px;background:var(--green-bg);border-radius:6px;display:inline-block;}
+.goal-daily.warn{background:#FFF3E0;color:#E09015;}
+.goal-btns{display:flex;gap:8px;margin-top:10px;}
+.goal-btn{flex:1;padding:8px;border:none;border-radius:8px;font-size:13px;font-weight:500;cursor:pointer;transition:all .15s;}
+.goal-btn:active{transform:scale(.97);}
+.goal-btn.primary{background:var(--green);color:#fff;}
+.goal-btn.rest{background:#FFF3E0;color:#E09015;border:1px solid #FFE0B2;}
+.goal-btn.undo{background:#FFF0F0;color:#E74C3C;border:1px solid #FFD0D0;animation:undoFadeIn .2s;}
+@keyframes undoFadeIn{from{opacity:0;transform:scale(.95)}to{opacity:1;transform:scale(1)}}
+.goal-deadline{font-size:11px;color:var(--text3);margin-top:6px;}
+
+/* === 新增：奖励 === */
+.reward-card{background:var(--card);border-radius:12px;padding:14px;margin-bottom:10px;box-shadow:0 1px 3px rgba(0,0,0,.05);}
+.reward-pts{font-size:20px;font-weight:700;color:var(--green);text-align:center;padding:8px 0;margin-bottom:8px;}
+.reward-item{display:flex;align-items:center;justify-content:space-between;padding:10px 0;border-bottom:1px solid var(--border);}
+.reward-item:last-child{border-bottom:none;}
+.reward-info{flex:1;}
+.reward-info .rname{font-size:13px;font-weight:500;}
+.reward-info .rcost{font-size:11px;color:var(--text3);margin-top:2px;}
+.reward-btns{display:flex;gap:6px;}
+.rbtn{padding:5px 10px;border:none;border-radius:6px;font-size:12px;cursor:pointer;}
+.rbtn.exchange{background:var(--green);color:#fff;}
+.rbtn.del{background:#fee;color:#e55;}
+.add-reward{display:flex;gap:8px;margin-top:10px;padding-top:10px;border-top:1px solid var(--border);}
+.add-reward input{flex:1;padding:7px 10px;border:1px solid #e0e0e0;border-radius:8px;font-size:13px;outline:none;}
+.add-reward button{padding:7px 12px;background:var(--green);color:#fff;border:none;border-radius:8px;font-size:12px;cursor:pointer;}
+.redemptions{margin-top:10px;}
+.redemptions h4{font-size:12px;color:var(--text3);margin-bottom:6px;}
+.redemption-item{font-size:12px;color:var(--text2);padding:4px 0;border-bottom:1px dashed var(--border);}
+
+/* === 数据管理 === */
+.data-mgmt{margin-top:12px;padding-top:12px;border-top:1px solid var(--border);}
+.data-mgmt summary{font-size:12px;color:var(--text3);cursor:pointer;margin-bottom:8px;}
+.data-btns{display:flex;gap:8px;flex-wrap:wrap;}
+.data-btn{padding:6px 12px;border:1px solid #e0e0e0;border-radius:6px;font-size:12px;cursor:pointer;background:#fff;color:var(--text2);}
+.data-btn.danger{border-color:#fcc;color:#e55;}
+
+@media(max-width:400px){.tab{font-size:11px;padding:8px 0;}}
+</style>
+</head>
+<body>
+
+<div class="header" id="mainHeader">
+  <div>
+    <h1>豆 · 工作台</h1>
+    <div class="motto">想法交给我来拆，你只负责动手</div>
+  </div>
+  <div class="date">
+    <div id="curDate"></div>
+    <small id="curTime"></small>
+  </div>
+</div>
+
+<div class="container">
+  <div class="phase" id="phaseBar">
+    <span class="name" id="phaseName">--</span>
+    <span class="days" id="phaseDays">--</span>
+  </div>
+
+  <div class="stats">
+    <div class="stat"><div class="num" id="sToday">0/0</div><div class="desc">今日完成</div></div>
+    <div class="stat"><div class="num" id="sStreak">1</div><div class="desc">连续打卡</div></div>
+    <div class="stat"><div class="num" id="sTotal">0%</div><div class="desc">总进度</div></div>
+  </div>
+
+  <div class="level-bar" id="levelBar" style="display:none">
+    <div class="lv-top">
+      <span class="lv-name" id="lvName">🌰 种子 Lv.0</span>
+      <span class="lv-pts" id="lvPts">0 积分</span>
+    </div>
+    <div class="lv-bar"><div class="fill" id="lvFill" style="width:0%"></div></div>
+    <div class="lv-next" id="lvNext">下一级还需 10 分</div>
+  </div>
+
+  <div class="tabs">
+    <div class="tab active" onclick="switchTab('today',this)">今日任务</div>
+    <div class="tab" onclick="switchTab('week',this)">本周概览</div>
+    <div class="tab" onclick="switchTab('progress',this)">总进度</div>
+    <div class="tab" onclick="switchTab('goals',this)">🎯目标</div>
+    <div class="tab" onclick="switchTab('rewards',this)">🎁奖励</div>
+  </div>
+
+  <div class="tab-content active" id="tc-today">
+    <div class="card">
+      <div class="card-hd"><h2 id="todayTitle">📌 --</h2><span class="hint" id="todayHint"></span></div>
+      <div class="card-bd" id="todayTasks"></div>
+    </div>
+  </div>
+
+  <div class="tab-content" id="tc-week">
+    <div class="card">
+      <div class="card-hd"><h2>📅 本周安排</h2><span class="hint" id="weekRange"></span></div>
+      <div class="card-bd"><div class="week-list" id="weekList"></div></div>
+    </div>
+  </div>
+
+  <div class="tab-content" id="tc-progress">
+    <div class="card">
+      <div class="card-hd"><h2>📚 文学史进度</h2><span class="hint">3册约40章</span></div>
+      <div class="card-bd" id="litProgress"></div>
+    </div>
+    <div class="card">
+      <div class="card-hd"><h2>🎧 六级听力</h2><span class="hint">6套真题</span></div>
+      <div class="card-bd">
+        <div class="prog"><div class="prog-bar"><div class="fill" id="listenFill" style="width:0%"></div></div>
+        <div class="prog-info"><span id="listenInfo">0/6 套</span><span>基线98 → 目标120+</span></div></div>
+      </div>
+    </div>
+    <div class="card">
+      <div class="card-hd"><h2>📕 阅读进度</h2></div>
+      <div class="card-bd">
+        <div class="book-row"><div class="book-label">阅读计划 · 1806页</div><div class="books"><span class="book cur">蛇结 380页</span><span class="book">赫索格 979页</span><span class="book">我弥留之际 447页</span></div></div>
+      </div>
+    </div>
+    <div class="card">
+      <div class="card-hd"><h2>🏃 体态矫正</h2><span class="hint">欧阳春晓</span></div>
+      <div class="card-bd" id="exerciseProgress"></div>
+    </div>
+    <div class="card">
+      <div class="card-hd"><h2>📏 体重记录</h2><span class="hint">目标120斤以下</span></div>
+      <div class="card-bd">
+        <div class="weight-row"><input type="text" id="weightInput" placeholder="输入今天体重（斤）"><button onclick="saveWeight()">记录</button></div>
+        <div class="weight-log" id="weightLog"></div>
+      </div>
+    </div>
+    <details class="data-mgmt">
+      <summary>⚙️ 数据管理</summary>
+      <div class="data-btns">
+        <button class="data-btn" onclick="exportData()">📤 导出JSON</button>
+        <button class="data-btn" onclick="document.getElementById('importFile').click()">📥 导入JSON</button>
+        <button class="data-btn danger" onclick="clearAllData()">🗑️ 清除所有数据</button>
+      </div>
+      <input type="file" id="importFile" accept=".json" style="display:none" onchange="importData(event)">
+    </details>
+  </div>
+
+  <div class="tab-content" id="tc-goals">
+    <div id="goalsContainer"></div>
+  </div>
+
+  <div class="tab-content" id="tc-rewards">
+    <div class="reward-card">
+      <div style="text-align:center;margin-bottom:4px;font-size:12px;color:var(--text3)">可用积分</div>
+      <div class="reward-pts" id="availablePts">0</div>
+    </div>
+    <div class="card">
+      <div class="card-hd"><h2>🎁 奖励列表</h2></div>
+      <div class="card-bd" id="rewardList"></div>
+    </div>
+    <div class="card">
+      <div class="card-hd"><h2>📜 兑换记录</h2></div>
+      <div class="card-bd"><div class="redemptions" id="redemptionList"></div></div>
+    </div>
+  </div>
+</div>
+
+<div class="footer">🫛 豌豆工作台 · 数据保存在本地</div>
+
+<script>
+// ========== 41天完整任务数据 ==========
+const START=new Date(2026,7,13);
+const RPLAN=[{n:'《蛇结》',d:4,p:380},{n:'《赫索格》',d:11,p:979},{n:'《我弥留之际》',d:5,p:447}];
+const DATA_VERSION=104;
+const PLAN={
+1:{date:"8.13",wd:"周四",phase:"第一阶段 · 启动期",hint:"正式进入节奏",tasks:[
+  {cat:"📚",t:"文学史",s:"总绪论"},
+  {cat:"📕",t:"阅读",bi:0,bd:1},
+  {cat:"🎨",t:"画画",s:"抖抖村练习"},
+  {cat:"🎧",t:"六级听力",s:"2019年6月 第1套 长对话 精听"},
+  {cat:"🏃",t:"体态矫正",s:"足弓综合训练"},
+  {cat:"🖥️",t:"计算机二级 看3套视频讲解+刷29道选择题"},{cat:"🗣️",t:"普通话 3套真题+3篇命题说话底稿"}
+]},
+2:{date:"8.14",wd:"周五",phase:"第一阶段 · 启动期",tasks:[
+  {cat:"📚",t:"文学史",s:"第一编绪论"},
+  {cat:"📕",t:"阅读",bi:0,bd:2},
+  {cat:"🎨",t:"画画",s:"K大课程练习"},
+  {cat:"🎧",t:"六级听力",s:"2019年6月 第1套 长对话 精听+对照"},
+  {cat:"🏃",t:"体态矫正",s:"髋关节灵活度训练"},
+  {cat:"🖥️",t:"计算机二级 看3套视频讲解+刷29道选择题"},{cat:"🗣️",t:"普通话 3套真题+3篇命题说话底稿"}
+]},
+3:{date:"8.15",wd:"周六",phase:"第一阶段 · 启动期",tasks:[
+  {cat:"📚",t:"文学史",s:"第一章 上古神话"},
+  {cat:"📕",t:"阅读",bi:0,bd:3},
+  {cat:"🎨",t:"画画",s:"抖抖村练习"},
+  {cat:"🎧",t:"六级听力",s:"2019年6月 第1套 篇章 精听"},
+  {cat:"🏃",t:"体态矫正",s:"足弓综合训练"},
+  {cat:"🖥️",t:"计算机二级 看3套视频讲解+刷29道选择题"},{cat:"🗣️",t:"普通话 3套真题+3篇命题说话底稿"}
+]},
+4:{date:"8.16",wd:"周日",phase:"第一阶段 · 启动期",tasks:[
+  {cat:"📚",t:"文学史",s:"第二章 殷商西周的书面散文"},
+  {cat:"📕",t:"阅读",bi:0,bd:4},
+  {cat:"🎨",t:"画画",s:"K大课程练习"},
+  {cat:"🎧",t:"六级听力",s:"2019年6月 第1套 篇章 精听+对照"},
+  {cat:"🏃",t:"体态矫正",s:"核心稳定训练"},
+  {cat:"🖥️",t:"计算机二级 看3套视频讲解+刷29道选择题"},{cat:"🗣️",t:"普通话 3套真题+3篇命题说话底稿"}
+]},
+5:{date:"8.17",wd:"周一",phase:"第一阶段 · 启动期",tasks:[
+  {cat:"📚",t:"文学史",s:"第三章 诗经"},
+  {cat:"📕",t:"阅读",bi:1,bd:1},
+  {cat:"🎨",t:"画画",s:"抖抖村练习"},
+  {cat:"🎧",t:"六级听力",s:"2019年6月 第1套 讲座 精听"},
+  {cat:"🏃",t:"体态矫正",s:"足弓综合训练"},
+  {cat:"🖥️",t:"计算机二级 看3套视频讲解+刷29道选择题"},{cat:"🗣️",t:"普通话 3套真题+3篇命题说话底稿"}
+]},
+6:{date:"8.18",wd:"周二",phase:"第一阶段 · 启动期",tasks:[
+  {cat:"📚",t:"文学史",s:"第四章 左传"},
+  {cat:"📕",t:"阅读",bi:1,bd:2},
+  {cat:"🎨",t:"画画",s:"K大课程练习"},
+  {cat:"🎧",t:"六级听力",s:"2019年6月 第1套 讲座 精听+复盘"},
+  {cat:"🏃",t:"体态矫正",s:"髋关节灵活度训练"},
+  {cat:"🖥️",t:"计算机二级 看3套视频讲解+刷29道选择题"},{cat:"🗣️",t:"普通话 3套真题+3篇命题说话底稿"}
+]},
+7:{date:"8.19",wd:"周三",phase:"第一阶段 · 启动期",tasks:[
+  {cat:"📚",t:"文学史",s:"第五章 孟子庄子"},
+  {cat:"📕",t:"阅读",bi:1,bd:3},
+  {cat:"🎨",t:"画画",s:"自由练习"},
+  {cat:"🎧",t:"六级听力",s:"2019年6月 第2套 长对话 精听"},
+  {cat:"🏃",t:"体态矫正",s:"足弓综合训练"},
+  {cat:"🖥️",t:"计算机二级 看3套视频讲解+刷29道选择题"},{cat:"🗣️",t:"普通话 3套真题+3篇命题说话底稿"}
+]},
+8:{date:"8.20",wd:"周四",phase:"第一阶段 · 启动期",hint:"第一阶段收尾",tasks:[
+  {cat:"📚",t:"文学史",s:"第六章 屈原与楚辞"},
+  {cat:"📕",t:"阅读",bi:1,bd:4},
+  {cat:"🎨",t:"画画",s:"抖抖村练习"},
+  {cat:"🎧",t:"六级听力",s:"2019年6月 第2套 长对话 精听+对照"},
+  {cat:"🏃",t:"体态矫正",s:"骨盆回正"},
+  {cat:"🖥️",t:"计算机二级 看3套视频讲解+刷29道选择题"},{cat:"🗣️",t:"普通话 3套真题+3篇命题说话底稿"}
+]},
+9:{date:"8.21",wd:"周五",phase:"第二阶段 · 加速期",tasks:[
+  {cat:"📚",t:"文学史",s:"第二编绪论"},
+  {cat:"📕",t:"阅读",bi:1,bd:5},
+  {cat:"🎨",t:"画画",s:"K大课程练习"},
+  {cat:"🎧",t:"六级听力",s:"2019年6月 第2套 篇章 精听"},
+  {cat:"🏃",t:"体态矫正",s:"足弓综合训练"},
+  {cat:"📝",t:"考研规划",s:"了解考研科目与时间安排"},
+  {cat:"🖥️",t:"计算机二级 看3套视频讲解+刷29道选择题"},{cat:"🗣️",t:"普通话 3套真题+3篇命题说话底稿"}
+]},
+10:{date:"8.22",wd:"周六",phase:"第二阶段 · 加速期",hint:"重点章，多花时间",tasks:[
+  {cat:"📚",t:"文学史",s:"第一章 秦与西汉散文"},
+  {cat:"📕",t:"阅读",bi:1,bd:6},
+  {cat:"🎨",t:"画画",s:"抖抖村练习"},
+  {cat:"🎧",t:"六级听力",s:"2019年6月 第2套 篇章 精听+对照"},
+  {cat:"🏃",t:"体态矫正",s:"核心稳定训练"},
+  {cat:"🖥️",t:"计算机二级 看2套视频讲解+刷28道选择题"},{cat:"🗣️",t:"普通话 2套真题+2篇命题说话底稿+1套预测卷"}
+]},
+11:{date:"8.23",wd:"周日",phase:"第二阶段 · 加速期",tasks:[
+  {cat:"📚",t:"文学史",s:"第二章 西汉辞赋"},
+  {cat:"📕",t:"阅读",bi:1,bd:7},
+  {cat:"🎨",t:"画画",s:"K大课程练习"},
+  {cat:"🎧",t:"六级听力",s:"2019年6月 第2套 讲座 精听"},
+  {cat:"🏃",t:"体态矫正",s:"足弓综合训练"},
+  {cat:"🖥️",t:"计算机二级 看2套视频讲解+刷28道选择题"},{cat:"🗣️",t:"普通话 2套真题+2篇命题说话底稿+1套预测卷"}
+]},
+12:{date:"8.24",wd:"周一",phase:"第二阶段 · 加速期",hint:"重点章，多花时间",tasks:[
+  {cat:"📚",t:"文学史",s:"第三章 司马迁与史记"},
+  {cat:"📕",t:"阅读",bi:1,bd:8},
+  {cat:"🎨",t:"画画",s:"抖抖村练习"},
+  {cat:"🎧",t:"六级听力",s:"2019年6月 第2套 讲座 精听+复盘"},
+  {cat:"🏃",t:"体态矫正",s:"骨盆回正"},
+  {cat:"🖥️",t:"计算机二级 看2套视频讲解+刷28道选择题"},{cat:"🗣️",t:"普通话 2套真题+2篇命题说话底稿+1套预测卷"}
+]},
+13:{date:"8.25",wd:"周二",phase:"第二阶段 · 加速期",hint:"第二阶段收尾",tasks:[
+  {cat:"📚",t:"文学史",s:"第四章 东汉辞赋"},
+  {cat:"📕",t:"阅读",bi:1,bd:9},
+  {cat:"🎨",t:"画画",s:"K大课程练习"},
+  {cat:"🎧",t:"六级听力",s:"2019年12月 第1套 长对话 精听"},
+  {cat:"🏃",t:"体态矫正",s:"核心稳定训练"},
+  {cat:"🖥️",t:"计算机二级 看2套视频讲解+刷28道选择题"},{cat:"🗣️",t:"普通话 2套真题+2篇命题说话底稿+1套预测卷"}
+]},
+14:{date:"8.26",wd:"周三",phase:"第三阶段 · 核心期",tasks:[
+  {cat:"📚",t:"文学史",s:"第五章 汉书"},
+  {cat:"📕",t:"阅读",bi:1,bd:10},
+  {cat:"🎨",t:"画画",s:"自由练习"},
+  {cat:"🎧",t:"六级听力",s:"2019年12月 第1套 长对话 精听+对照"},
+  {cat:"🏃",t:"体态矫正",s:"足弓综合训练"},
+  {cat:"🖥️",t:"计算机二级 看2套视频讲解+刷28道选择题"},{cat:"🗣️",t:"普通话 2套真题+2篇命题说话底稿+1套预测卷"}
+]},
+15:{date:"8.27",wd:"周四",phase:"第三阶段 · 核心期",tasks:[
+  {cat:"📚",t:"文学史",s:"第六章 汉代乐府诗"},
+  {cat:"📕",t:"阅读",bi:1,bd:11},
+  {cat:"🎨",t:"画画",s:"抖抖村练习"},
+  {cat:"🎧",t:"六级听力",s:"2019年12月 第1套 篇章 精听"},
+  {cat:"🏃",t:"体态矫正",s:"核心稳定训练"},
+  {cat:"🖥️",t:"计算机二级 看2套视频讲解+刷28道选择题"},{cat:"🗣️",t:"普通话 2套真题+2篇命题说话底稿"}
+]},
+16:{date:"8.28",wd:"周五",phase:"第三阶段 · 核心期",tasks:[
+  {cat:"📚",t:"文学史",s:"第七章 汉代文人诗"},
+  {cat:"📕",t:"阅读",bi:2,bd:1},
+  {cat:"🎨",t:"画画",s:"K大课程练习"},
+  {cat:"🎧",t:"六级听力",s:"2019年12月 第1套 篇章 精听+对照"},
+  {cat:"🏃",t:"体态矫正",s:"胸椎灵活度"},
+  {cat:"📝",t:"考研规划",s:"确定2-3所目标师范院校"},
+  {cat:"🖥️",t:"计算机二级 看2套视频讲解+刷28道选择题"},{cat:"🗣️",t:"普通话 2套真题+2篇命题说话底稿"}
+]},
+17:{date:"8.29",wd:"周六",phase:"第三阶段 · 核心期",tasks:[
+  {cat:"📚",t:"文学史",s:"第三编绪论"},
+  {cat:"📕",t:"阅读",bi:2,bd:2},
+  {cat:"🎨",t:"画画",s:"抖抖村练习"},
+  {cat:"🎧",t:"六级听力",s:"2019年12月 第1套 讲座 精听"},
+  {cat:"🏃",t:"体态矫正",s:"足弓基础热身"},
+  {cat:"🖥️",t:"计算机二级 看2套视频讲解+刷28道选择题"},{cat:"🗣️",t:"普通话 2套真题+2篇命题说话底稿"}
+]},
+18:{date:"8.30",wd:"周日",phase:"第三阶段 · 核心期",tasks:[
+  {cat:"📚",t:"文学史",s:"第一章 三国文学"},
+  {cat:"📕",t:"阅读",bi:2,bd:3},
+  {cat:"🎨",t:"画画",s:"K大课程练习"},
+  {cat:"🎧",t:"六级听力",s:"2019年12月 第1套 讲座 精听+复盘"},
+  {cat:"🏃",t:"体态矫正",s:"沙漏腰训练"},
+  {cat:"🖥️",t:"计算机二级 看2套视频讲解+刷28道选择题"},{cat:"🗣️",t:"普通话 2套真题+2篇命题说话底稿"}
+]},
+19:{date:"8.31",wd:"周一",phase:"第三阶段 · 核心期",tasks:[
+  {cat:"📚",t:"文学史",s:"第二章 两晋文学"},
+  {cat:"📕",t:"阅读",bi:2,bd:4},
+  {cat:"🎨",t:"画画",s:"抖抖村练习"},
+  {cat:"🎧",t:"六级听力",s:"2020年7月 第2套 长对话 精听"},
+  {cat:"🏃",t:"体态矫正",s:"骨盆回正"},
+  {cat:"🖥️",t:"计算机二级 看2套视频讲解+刷28道选择题"},{cat:"🗣️",t:"普通话 2套真题+2篇命题说话底稿"}
+]},
+20:{date:"9.1",wd:"周二",phase:"第三阶段 · 核心期",tasks:[
+  {cat:"📚",t:"文学史",s:"第三章 陶渊明"},
+  {cat:"📕",t:"阅读",bi:2,bd:5},
+  {cat:"🎨",t:"画画",s:"K大课程练习"},
+  {cat:"🎧",t:"六级听力",s:"2020年7月 第2套 长对话 精听+对照+跟读"},
+  {cat:"🏃",t:"体态矫正",s:"足弓"}
+]},
+21:{date:"9.2",wd:"周三",phase:"第三阶段 · 核心期",hint:"第三阶段收尾",tasks:[
+  {cat:"📚",t:"文学史",s:"第四章 南朝文学"},
+  {cat:"🎨",t:"画画",s:"自由练习"},
+  {cat:"🎧",t:"六级听力",s:"2020年7月 第2套 篇章 精听"},
+  {cat:"🏃",t:"体态矫正",s:"核心稳定训练"}
+]},
+22:{date:"9.3",wd:"周四",phase:"第三阶段 · 核心期",tasks:[
+  {cat:"📚",t:"文学史",s:"第五章 北朝文学"},
+  {cat:"🎨",t:"画画",s:"抖抖村练习"},
+  {cat:"🎧",t:"六级听力",s:"2020年7月 第2套 篇章 精听+对照"},
+  {cat:"🏃",t:"体态矫正",s:"沙漏腰训练"}
+]},
+23:{date:"9.4",wd:"周五",phase:"第三阶段 · 核心期",tasks:[
+  {cat:"📚",t:"文学史",s:"第六章 魏晋南北朝小说"},
+  {cat:"🎨",t:"画画",s:"K大课程练习"},
+  {cat:"🎧",t:"六级听力",s:"2020年7月 第2套 讲座 精听"},
+  {cat:"🏃",t:"体态矫正",s:"足弓基础热身"},
+  {cat:"📝",t:"考研规划",s:"对比考试科目和参考书"},
+  {cat:"📏",t:"体重记录",s:"称体重+量腰围臀围"}
+]},
+24:{date:"9.5",wd:"周六",phase:"第四阶段 · 深入期",tasks:[
+  {cat:"📚",t:"文学史",s:"第四编绪论"},
+  {cat:"🎨",t:"画画",s:"抖抖村练习"},
+  {cat:"🎧",t:"六级听力",s:"2020年7月 第2套 讲座 精听+跟读+复盘"},
+  {cat:"🏃",t:"体态矫正",s:"核心稳定训练"}
+]},
+25:{date:"9.6",wd:"周日",phase:"第四阶段 · 深入期",tasks:[
+  {cat:"📚",t:"文学史",s:"第一章 隋及初唐文学"},
+  {cat:"🎨",t:"画画",s:"K大课程练习"},
+  {cat:"🎧",t:"六级听力",s:"2021年12月 第1套 长对话 精听"},
+  {cat:"🏃",t:"体态矫正",s:"足弓"}
+]},
+26:{date:"9.7",wd:"周一",phase:"第四阶段 · 深入期",tasks:[
+  {cat:"📚",t:"文学史",s:"第二章 盛唐诗坛"},
+  {cat:"🎨",t:"画画",s:"抖抖村练习"},
+  {cat:"🎧",t:"六级听力",s:"2021年12月 第1套 长对话 精听+对照+跟读"},
+  {cat:"🏃",t:"体态矫正",s:"全身综合训练"},
+  {cat:"📏",t:"体重记录",s:"称体重+量腰围臀围"}
+]},
+27:{date:"9.8",wd:"周二",phase:"第四阶段 · 深入期",hint:"重点章，多花时间",tasks:[
+  {cat:"📚",t:"文学史",s:"第三章 李白"},
+  {cat:"🎨",t:"画画",s:"K大课程练习"},
+  {cat:"🎧",t:"六级听力",s:"2021年12月 第1套 篇章 精听"},
+  {cat:"🏃",t:"体态矫正",s:"核心稳定训练"}
+]},
+28:{date:"9.9",wd:"周三",phase:"第四阶段 · 深入期",hint:"重点章，多花时间",tasks:[
+  {cat:"📚",t:"文学史",s:"第四章 杜甫"},
+  {cat:"🎨",t:"画画",s:"自由练习"},
+  {cat:"🎧",t:"六级听力",s:"2021年12月 第1套 篇章 精听+对照"},
+  {cat:"🏃",t:"体态矫正",s:"足弓基础热身"},
+  {cat:"📏",t:"体重记录",s:"称体重+量腰围臀围"}
+]},
+29:{date:"9.10",wd:"周四",phase:"第四阶段 · 深入期",tasks:[
+  {cat:"📚",t:"文学史",s:"第五章 中唐诗坛"},
+  {cat:"🎨",t:"画画",s:"抖抖村练习"},
+  {cat:"🎧",t:"六级听力",s:"2021年12月 第1套 讲座 精听"},
+  {cat:"🏃",t:"体态矫正",s:"骨盆回正"}
+]},
+30:{date:"9.11",wd:"周五",phase:"第四阶段 · 深入期",tasks:[
+  {cat:"📚",t:"文学史",s:"第六章 白居易与元白诗派"},
+  {cat:"🎨",t:"画画",s:"K大课程练习"},
+  {cat:"🎧",t:"六级听力",s:"2021年12月 第1套 讲座 精听+跟读+复盘"},
+  {cat:"🏃",t:"体态矫正",s:"沙漏腰训练"},
+  {cat:"📝",t:"考研规划",s:"确定最终目标院校"},
+  {cat:"📏",t:"体重记录",s:"称体重+量腰围臀围"}
+]},
+31:{date:"9.12",wd:"周六",phase:"第四阶段 · 深入期",tasks:[
+  {cat:"📚",t:"文学史",s:"第七章 古文思潮与唐文"},
+  {cat:"🎨",t:"画画",s:"抖抖村练习"},
+  {cat:"🎧",t:"六级听力",s:"2021年12月 第2套 长对话 精听"},
+  {cat:"🏃",t:"体态矫正",s:"足弓"}
+]},
+32:{date:"9.13",wd:"周日",phase:"第四阶段 · 深入期",tasks:[
+  {cat:"📚",t:"文学史",s:"第八章 传奇与敦煌文学"},
+  {cat:"🎨",t:"画画",s:"K大课程练习"},
+  {cat:"🎧",t:"六级听力",s:"2021年12月 第2套 长对话 精听+对照+跟读"},
+  {cat:"🏃",t:"体态矫正",s:"核心稳定训练"}
+]},
+33:{date:"9.14",wd:"周一",phase:"第四阶段 · 深入期",tasks:[
+  {cat:"📚",t:"文学史",s:"第九章 晚唐五代诗坛"},
+  {cat:"🎨",t:"画画",s:"抖抖村练习"},
+  {cat:"🎧",t:"六级听力",s:"2021年12月 第2套 篇章 精听"},
+  {cat:"🏃",t:"体态矫正",s:"全身综合训练"},
+  {cat:"📏",t:"体重记录",s:"称体重+量腰围臀围"}
+]},
+34:{date:"9.15",wd:"周二",phase:"第四阶段 · 深入期",hint:"第四阶段收尾",tasks:[
+  {cat:"📚",t:"文学史",s:"第十章 词的兴起与晚唐五代词"},
+  {cat:"🎨",t:"画画",s:"K大课程练习"},
+  {cat:"🎧",t:"六级听力",s:"2021年12月 第2套 篇章 精听+对照"},
+  {cat:"🏃",t:"体态矫正",s:"足弓基础热身"}
+]},
+35:{date:"9.16",wd:"周三",phase:"第五阶段 · 冲刺期",tasks:[
+  {cat:"📚",t:"文学史",s:"第五编绪论"},
+  {cat:"🎨",t:"画画",s:"自由练习"},
+  {cat:"🎧",t:"六级听力",s:"2021年12月 第2套 讲座 精听"},
+  {cat:"🏃",t:"体态矫正",s:"全身综合训练"},
+  {cat:"📏",t:"体重记录",s:"称体重+量腰围臀围"}
+]},
+36:{date:"9.17",wd:"周四",phase:"第五阶段 · 冲刺期",tasks:[
+  {cat:"📚",t:"文学史",s:"第一章 北宋初期文学"},
+  {cat:"🎨",t:"画画",s:"抖抖村练习"},
+  {cat:"🎧",t:"六级听力",s:"2021年12月 第2套 讲座 精听+跟读+复盘"},
+  {cat:"🏃",t:"体态矫正",s:"核心稳定训练"}
+]},
+37:{date:"9.18",wd:"周五",phase:"第五阶段 · 冲刺期",tasks:[
+  {cat:"📚",t:"文学史",s:"第二章 欧阳修与诗文革新"},
+  {cat:"🎨",t:"画画",s:"K大课程练习"},
+  {cat:"🎧",t:"六级听力",s:"2023年6月 第1套 长对话 精听"},
+  {cat:"🏃",t:"体态矫正",s:"足弓"},
+  {cat:"📝",t:"考研规划",s:"列出参考书目清单+制定复习范围"},
+  {cat:"📏",t:"体重记录",s:"称体重+量腰围臀围"}
+]},
+38:{date:"9.19",wd:"周六",phase:"第五阶段 · 冲刺期",tasks:[
+  {cat:"📚",t:"文学史",s:"第三章 北宋前期词坛"},
+  {cat:"🎨",t:"画画",s:"抖抖村练习"},
+  {cat:"🎧",t:"六级听力",s:"2023年6月 第1套 长对话 精听"},
+  {cat:"🏃",t:"体态矫正",s:"全身综合训练"}
+]},
+39:{date:"9.20",wd:"周日",phase:"第五阶段 · 冲刺期",hint:"重点章，多花时间",tasks:[
+  {cat:"📚",t:"文学史",s:"第四章 苏轼"},
+  {cat:"🎨",t:"画画",s:"K大课程练习"},
+  {cat:"🎧",t:"六级听力",s:"2023年6月 第1套 全卷精听+暑假总复盘"},
+  {cat:"🏃",t:"体态矫正",s:"核心稳定训练"}
+]},
+40:{date:"9.21",wd:"周一",phase:"第六阶段 · 收尾期",hint:"暑假总结日",tasks:[
+  {cat:"📚",t:"文学史"},
+  {cat:"🎨",t:"画画",s:"抖抖村练习"},
+  {cat:"🎧",t:"六级听力",s:"制定开学后精听计划 衔接12月考试"},
+  {cat:"🏃",t:"体态矫正",s:"足弓基础热身"},
+  {cat:"📏",t:"体重记录",s:"称体重+量腰围臀围"}
+]}
+};
+
+
+// ========== 工具函数 ==========
+const LS_PREFIX='dw_';
+function lsKey(k){return LS_PREFIX+k;}
+function lsGet(k,d){try{const v=localStorage.getItem(lsKey(k));return v?JSON.parse(v):d;}catch(e){return d;}}
+function lsSet(k,v){try{localStorage.setItem(lsKey(k),JSON.stringify(v));}catch(e){}}
+
+function getDayNum(){
+  const now=new Date();
+  const start=new Date(START);
+  start.setHours(5,0,0,0);
+  const elapsed=now-start;
+  const dayNum=Math.floor(elapsed/86400000)+1;
+  if(dayNum<1)return 1;
+  if(dayNum>41)return 41;
+  return dayNum;
+}
+
+function getTodayStr(){
+  const now=new Date();
+  return (now.getMonth()+1)+'.'+now.getDate();
+}
+
+function switchTab(t,el){
+  document.querySelectorAll('.tab').forEach(e=>e.classList.remove('active'));
+  document.querySelectorAll('.tab-content').forEach(e=>e.classList.remove('active'));
+  el.classList.add('active');
+  document.getElementById('tc-'+t).classList.add('active');
+  if(t==='goals')renderGoals();
+  if(t==='rewards')renderRewards();
+}
+
+// ========== 等级系统 ==========
+function getCumulativePoints(level){
+  if(level<=0)return 0;
+  let pts=0;
+  for(let i=1;i<=level;i++){
+    if(i<=10)pts+=10;
+    else if(i<=20)pts+=20;
+    else if(i<=30)pts+=30;
+    else if(i<=40)pts+=40;
+    else pts+=50;
+  }
+  return pts;
+}
+
+function getLevelFromPoints(pts){
+  let lv=0;
+  while(getCumulativePoints(lv+1)<=pts)lv++;
+  return lv;
+}
+
+function getLevelName(lv){
+  if(lv>=40)return{name:'🌲🌲🌲森林',emoji:'🌲🌲🌲'};
+  if(lv>=23)return{name:'🌳大树',emoji:'🌳'};
+  if(lv>=13)return{name:'🌿小树',emoji:'🌿'};
+  if(lv>=5)return{name:'🌱嫩芽',emoji:'🌱'};
+  return{name:'🌰种子',emoji:'🌰'};
+}
+
+function getHeaderGradient(lv){
+  if(lv>=50)return'linear-gradient(135deg,#FDCB6E,#E17055)';
+  if(lv>=40)return'linear-gradient(135deg,#00B894,#55EFC4)';
+  if(lv>=30)return'linear-gradient(135deg,#E17055,#FAB1A0)';
+  if(lv>=20)return'linear-gradient(135deg,#6C5CE7,#A29BFE)';
+  if(lv>=10)return'linear-gradient(135deg,#5B9BD5,#9AB99C)';
+  return'linear-gradient(135deg,var(--green),var(--green-light))';
+}
+
+function calcTotalEarnedPoints(){
+  const goals=lsGet('goals',null);
+  if(!goals)return 0;
+  let total=0;
+  goals.forEach(g=>{
+    total+=g.done*(g.ppt||1);
+  });
+  return total;
+}
+
+function calcAvailablePoints(){
+  const earned=calcTotalEarnedPoints();
+  const spent=lsGet('rewards_spent',0);
+  return Math.max(0,Math.floor(earned-spent));
+}
+
+function renderLevelBar(){
+  const pts=calcAvailablePoints();
+  const lv=getLevelFromPoints(pts);
+  const info=getLevelName(lv);
+  const curLevelPts=getCumulativePoints(lv);
+  const nextLevelPts=getCumulativePoints(lv+1);
+  const needed=nextLevelPts-curLevelPts;
+  const progress=needed>0?Math.min(100,Math.round((pts-curLevelPts)/needed*100)):100;
+
+  document.getElementById('lvName').textContent=info.emoji+' '+info.name.replace(/^.+?\s/,'')+' Lv.'+lv;
+  document.getElementById('lvPts').textContent=pts+' 积分';
+  document.getElementById('lvFill').style.width=progress+'%';
+  if(lv>=50){
+    document.getElementById('lvNext').textContent='🎉 已达最高等级！';
+  }else{
+    document.getElementById('lvNext').textContent='下一级还需 '+(nextLevelPts-pts)+' 分';
+  }
+  document.getElementById('levelBar').style.display='block';
+  document.getElementById('mainHeader').style.background=getHeaderGradient(lv);
+}
+
+// ========== 目标系统 ==========
+const DEFAULT_GOALS=[
+  {id:'lit',name:'📚 文学史',emoji:'📚',total:84,unit:'章',ppt:2,deadline:'2026-11-15',hasRest:true,done:0,streak:0,lastDate:''},
+  {id:'reading',name:'📕 阅读',emoji:'📕',total:1806,unit:'页',ppt:0.1,deadline:'2026-09-01',hasRest:false,done:0,streak:0,lastDate:''},
+  {id:'draw',name:'🎨 画画',emoji:'🎨',total:274,unit:'节',ppt:1,deadline:'2027-12-05',hasRest:false,done:0,streak:0,lastDate:''},
+  {id:'exam',name:'📝 考研规划',emoji:'📝',total:4,unit:'步骤',ppt:5,deadline:'2026-09-04',hasRest:false,done:0,streak:0,lastDate:''},
+  {id:'listen',name:'🎧 六级听力',emoji:'🎧',total:99999,unit:'天',ppt:1,deadline:'',hasRest:false,done:0,streak:0,lastDate:''},
+  {id:'posture',name:'🏃 体态矫正',emoji:'🏃',total:99999,unit:'节',ppt:1,deadline:'2027-07-22',hasRest:true,done:0,streak:0,lastDate:''},
+  {id:'weight',name:'📏 体重记录',emoji:'📏',total:99999,unit:'次',ppt:0.5,deadline:'2027-07-22',hasRest:false,done:0,streak:0,lastDate:'',startDate:'2026-09-04'},
+  {id:'ncre',name:'🖥️ 计算机二级',emoji:'🖥️',total:20,unit:'天',ppt:3,deadline:'2026-09-01',hasRest:false,done:0,streak:0,lastDate:''},
+  {id:'pth',name:'🗣️ 普通话',emoji:'🗣️',total:20,unit:'天',ppt:3,deadline:'2026-09-01',hasRest:false,done:0,streak:0,lastDate:''}
+];
+
+function initGoals(){
+  let goals=lsGet('goals',null);
+  if(!goals){
+    goals=JSON.parse(JSON.stringify(DEFAULT_GOALS));
+    computeInitialGoalProgress(goals);
+    lsSet('goals',goals);
+  }
+  return goals;
+}
+
+function computeInitialGoalProgress(goals){
+  // Compute from historical task completion
+  const d=getDayNum();
+  let litCount=0,readTasks=0,drawTasks=0,listenCount=0,postureCount=0,examCount=0,ncreCount=0,pthCount=0;
+  for(let i=1;i<=40;i++){
+    const info=PLAN[i];if(!info)continue;
+    const done=lsGet('done_'+i,[]);
+    done.forEach(idx=>{
+      if(idx>=info.tasks.length)return;
+      const t=info.tasks[idx];
+      if(t.cat==='📚')litCount++;
+      else if(t.cat==='🎧')listenCount++;
+      else if(t.cat==='🏃')postureCount++;
+      else if(t.cat==='🖥️')ncreCount++;
+      else if(t.cat==='🗣️')pthCount++;
+      else if(t.cat==='📝')examCount++;
+    });
+  }
+  // Read tasks: count 📖 tasks that are actual reading (not 小学教材)
+  const readingBooks=[{name:'蛇结',pages:380,days:4},{name:'赫索格',pages:979,days:11},{name:'我弥留之际',pages:447,days:5}];
+  for(let i=1;i<=40;i++){
+    const info=PLAN[i];if(!info)continue;
+    const done=lsGet('done_'+i,[]);
+    done.forEach(idx=>{
+      if(idx>=info.tasks.length)return;
+      const t=info.tasks[idx];
+      if(t.cat==='📕'&&isReadingTask(t.t)){
+        // Calculate actual pages from bi/bd
+        if(typeof t.bi==='number'&&typeof t.bd==='number'&&readingBooks[t.bi]){
+          readTasks+=Math.ceil(readingBooks[t.bi].pages/readingBooks[t.bi].days);
+        }
+      }
+      if(t.cat==='🎨')drawTasks++;
+    });
+  }
+
+  goals.forEach(g=>{
+    if(g.id==='lit')g.done=litCount;
+    if(g.id==='reading')g.done=readTasks; // actual pages read
+    if(g.id==='draw')g.done=drawTasks*3; // default 3 sessions per drawing task
+    if(g.id==='listen')g.done=listenCount;
+    if(g.id==='posture')g.done=postureCount;
+    if(g.id==='ncre')g.done=ncreCount;
+    if(g.id==='pth')g.done=pthCount;
+  });
+}
+
+function isReadingTask(t){
+  return !t.includes('小学教材')&&!t.includes('想法记录');
+}
+
+function getGoalProgress(id){
+  const goals=lsGet('goals',DEFAULT_GOALS);
+  const g=goals.find(g=>g.id===id);
+  return g?g.done:0;
+}
+
+let _lastGoalAction=null;
+let _goalUndoTimer=null;
+function goalCheckIn(id,amount){
+  amount=amount||1;
+  const goals=lsGet('goals',DEFAULT_GOALS);
+  const g=goals.find(g=>g.id===id);
+  if(!g)return;
+  const today=getTodayStr();
+  _lastGoalAction={id:id,prevDone:g.done,prevStreak:g.streak,prevLastDate:g.lastDate};
+  g.done+=amount;
+  if(g.lastDate!==today){
+    const yest=new Date();yest.setDate(yest.getDate()-1);
+    const yestStr=(yest.getMonth()+1)+'.'+(yest.getDate());
+    if(g.lastDate===yestStr||g.lastDate===''){g.streak++;}
+    else{g.streak=1;}
+    g.lastDate=today;
+  }
+  lsSet('goals',goals);
+  renderLevelBar();
+  renderGoals();
+  if(_goalUndoTimer)clearTimeout(_goalUndoTimer);
+  _goalUndoTimer=setTimeout(()=>{_lastGoalAction=null;renderGoals();},10000);
+}
+
+function goalUndo(){
+  if(!_lastGoalAction)return;
+  const goals=lsGet('goals',DEFAULT_GOALS);
+  const g=goals.find(g=>g.id===_lastGoalAction.id);
+  if(!g){_lastGoalAction=null;return;}
+  g.done=_lastGoalAction.prevDone;
+  g.streak=_lastGoalAction.prevStreak;
+  g.lastDate=_lastGoalAction.prevLastDate;
+  lsSet('goals',goals);
+  _lastGoalAction=null;
+  if(_goalUndoTimer){clearTimeout(_goalUndoTimer);_goalUndoTimer=null;}
+  renderLevelBar();
+  renderGoals();
+}
+
+function goalRestDay(id){
+  const goals=lsGet('goals',DEFAULT_GOALS);
+  const g=goals.find(g=>g.id===id);
+  if(!g)return;
+  const today=getTodayStr();
+  // Mark as rest day - just update lastDate to today to keep streak
+  const yest=new Date();yest.setDate(yest.getDate()-1);
+  const yestStr=(yest.getMonth()+1)+'.'+(yest.getDate());
+  if(g.lastDate===yestStr||g.lastDate===''){g.streak++;}
+  else{g.streak=0;}
+  g.lastDate=today+'(休)';
+  lsSet('goals',goals);
+  renderGoals();
+}
+
+function getRemainingDays(deadline){
+  if(!deadline)return -1;
+  const dl=new Date(deadline);dl.setHours(23,59,59);
+  const now=new Date();
+  const diff=Math.ceil((dl-now)/86400000);
+  return Math.max(0,diff);
+}
+
+function formatDateStr(dateStr){
+  if(!dateStr)return'无截止';
+  const d=new Date(dateStr);
+  return(d.getMonth()+1)+'/'+(d.getDate());
+}
+
+function renderGoals(){
+  const goals=lsGet('goals',DEFAULT_GOALS);
+  const container=document.getElementById('goalsContainer');
+  let html='';
+  goals.forEach((g,i)=>{
+    const remaining=Math.max(0,g.total-g.done);
+    const isContinuous=g.total>=99999;
+    const pct=isContinuous?0:Math.min(100,Math.round(g.done/g.total*100));
+    const remDays=getRemainingDays(g.deadline);
+    const daysOverdue=remDays===0&&!isContinuous&&g.deadline?Math.floor((new Date()-new Date(g.deadline+'T23:59:59'))/86400000):0;
+    const inGrace=daysOverdue>0&&daysOverdue<=3;
+    const pastGrace=daysOverdue>3;
+    const dailyRec=isContinuous?'每日坚持':(pastGrace?'已逾期':(remDays>0?Math.ceil(remaining/remDays)+' '+g.unit+'/天':inGrace?Math.ceil(remaining/1)+' '+g.unit+'/天 ⚠️':'已完成'));
+    const isWarn=isContinuous?false:(remDays>0&&Math.ceil(remaining/remDays)>10);
+    const deadlineStr=pastGrace?'已逾期':inGrace?'已逾期（宽限'+( 3-daysOverdue)+'天）':remDays<0?'已截止':(isContinuous?'持续打卡':formatDateStr(g.deadline)+' (剩'+remDays+'天)');
+
+    html+='<div class="goal-card">';
+    html+='<div class="goal-hd"><span class="goal-name">'+g.name+'</span>';
+    if(g.streak>0)html+='<span class="goal-streak">🔥'+g.streak+'天</span>';
+    html+='</div>';
+
+    if(isContinuous){
+      html+='<div class="goal-stats"><span>已完成: '+g.done+' '+g.unit+'</span><span>'+g.done+' 次打卡</span></div>';
+    }else{
+      html+='<div class="goal-stats"><span>'+g.done+'/'+g.total+' '+g.unit+'</span><span>剩余 '+remaining+' '+g.unit+'</span></div>';
+      html+='<div class="prog"><div class="prog-bar"><div class="fill" style="width:'+pct+'%"></div></div>';
+      html+='<div class="prog-info"><span>'+pct+'%</span><span>'+remaining+' '+g.unit+' 待完成</span></div></div>';
+    }
+
+    html+='<div class="goal-daily'+(isWarn?' warn':'')+'">📊 每日建议: '+dailyRec+'</div>';
+    html+='<div class="goal-btns">';
+    html+='<button class="goal-btn primary" onclick="goalCheckIn(\''+g.id+'\''+(g.id==='draw'?',3':'')+');">+1 打卡</button>';
+    if(g.hasRest)html+='<button class="goal-btn rest" onclick="goalRestDay(\''+g.id+'\');">🛌 休息日</button>';
+    if(_lastGoalAction&&_lastGoalAction.id===g.id)html+='<button class="goal-btn undo" onclick="goalUndo();">↩ 撤销</button>';
+    html+='</div>';
+    html+='<div class="goal-deadline">📅 '+deadlineStr+'</div>';
+
+    // Special: reading book tracking
+    if(g.id==='reading'){
+      const books=[{name:'蛇结',pages:380},{name:'赫索格',pages:979},{name:'我弥留之际',pages:447}];
+      let cum=0,curBook='';
+      for(let b of books){
+        if(g.done>=cum&&g.done<cum+b.pages){curBook='正在读: '+b.name;break;}
+        cum+=b.pages;
+      }
+      if(!curBook&&g.done>=1806)curBook='🎉 全部读完！';
+      else if(!curBook)curBook='尚未开始';
+      html+='<div style="font-size:11px;color:var(--text3);margin-top:4px;">📖 '+curBook+' ('+g.done+'/1806页)</div>';
+    }
+
+    html+='</div>';
+  });
+  container.innerHTML=html;
+}
+
+// ========== 奖励系统 ==========
+const DEFAULT_REWARDS=[
+  {id:1,name:'喝奶茶',cost:10},
+  {id:2,name:'吃一顿好的',cost:50},
+  {id:3,name:'买周边(1元=1分)',cost:0,custom:true}
+];
+
+function renderRewards(){
+  const pts=calcAvailablePoints();
+  document.getElementById('availablePts').textContent=pts+' 分';
+
+  const rewards=lsGet('rewards',DEFAULT_REWARDS);
+  let rhtml='';
+  rewards.forEach((r,i)=>{
+    rhtml+='<div class="reward-item">';
+    rhtml+='<div class="reward-info"><div class="rname">'+r.name+'</div>';
+    if(r.custom){
+      rhtml+='<div class="rcost">1元=1分，输入金额兑换</div>';
+      rhtml+='<input type="number" id="customAmt_'+i+'" placeholder="金额(元)" style="width:80px;padding:4px 8px;border:1px solid #e0e0e0;border-radius:6px;font-size:12px;margin-top:4px;">';
+    }else{
+      rhtml+='<div class="rcost">'+r.cost+' 积分</div>';
+    }
+    rhtml+='</div>';
+    rhtml+='<div class="reward-btns">';
+    rhtml+='<button class="rbtn exchange" onclick="exchangeReward('+i+')">兑换</button>';
+    rhtml+='<button class="rbtn del" onclick="deleteReward('+i+')">删除</button>';
+    rhtml+='</div></div>';
+  });
+  rhtml+='<div class="add-reward">';
+  rhtml+='<input type="text" id="newRewardName" placeholder="奖励名称">';
+  rhtml+='<input type="number" id="newRewardCost" placeholder="积分" style="width:70px;">';
+  rhtml+='<button onclick="addReward()">添加</button>';
+  rhtml+='</div>';
+  document.getElementById('rewardList').innerHTML=rhtml;
+
+  // Render redemptions
+  const redemptions=lsGet('redemptions',[]);
+  let ehtml='';
+  if(redemptions.length===0){
+    ehtml='<div style="font-size:12px;color:var(--text3)">暂无兑换记录</div>';
+  }else{
+    redemptions.slice(-10).reverse().forEach(r=>{
+      ehtml+='<div class="redemption-item">'+r.date+' - '+r.name+' (-'+r.cost+'分)</div>';
+    });
+  }
+  document.getElementById('redemptionList').innerHTML=ehtml;
+}
+
+function exchangeReward(idx){
+  const rewards=lsGet('rewards',DEFAULT_REWARDS);
+  const r=rewards[idx];
+  if(!r)return;
+  let cost=r.cost;
+  if(r.custom){
+    const amtInput=document.getElementById('customAmt_'+idx);
+    const amt=parseInt(amtInput?amtInput.value:0);
+    if(!amt||amt<=0){alert('请输入有效金额');return;}
+    cost=amt; // 1元=1分
+  }
+  const pts=calcAvailablePoints();
+  if(pts<cost){alert('积分不足！需要 '+cost+' 分，当前 '+pts+' 分');return;}
+  if(!confirm('确认兑换「'+r.name+'」？消耗 '+cost+' 积分'))return;
+
+  const spent=lsGet('rewards_spent',0)+cost;
+  lsSet('rewards_spent',spent);
+  const redemptions=lsGet('redemptions',[]);
+  redemptions.push({name:r.name,cost:cost,date:getTodayStr()});
+  lsSet('redemptions',redemptions);
+  renderRewards();
+  renderLevelBar();
+}
+
+function deleteReward(idx){
+  const rewards=lsGet('rewards',DEFAULT_REWARDS);
+  if(!confirm('确认删除「'+rewards[idx].name+'」？'))return;
+  rewards.splice(idx,1);
+  lsSet('rewards',rewards);
+  renderRewards();
+}
+
+function addReward(){
+  const name=document.getElementById('newRewardName').value.trim();
+  const cost=parseInt(document.getElementById('newRewardCost').value)||0;
+  if(!name){alert('请输入奖励名称');return;}
+  if(cost<=0){alert('请输入有效积分');return;}
+  const rewards=lsGet('rewards',DEFAULT_REWARDS);
+  rewards.push({id:Date.now(),name:name,cost:cost});
+  lsSet('rewards',rewards);
+  renderRewards();
+}
+
+// ========== 任务-目标联动 ==========
+function linkTaskToGoal(task){
+  const goals=lsGet('goals',DEFAULT_GOALS);
+  const cat=task.cat||'';
+  const t=task.t||'';
+  if(cat==='📚'){
+    goalCheckIn('lit',1);
+  }else if(cat==='📕'&&isReadingTask(t)){
+    // Calculate actual pages for this reading task
+    const books=[{name:'蛇结',pages:380},{name:'赫索格',pages:979},{name:'我弥留之际',pages:447}];
+    let pages=1;
+    if(typeof t.bi==='number'&&typeof t.bd==='number'&&books[t.bi]){
+      const book=books[t.bi];
+      pages=Math.ceil(book.pages/4); // 蛇结4天，赫索格11天，我弥留之际5天
+      if(t.bi===0)pages=Math.ceil(380/4);
+      else if(t.bi===1)pages=Math.ceil(979/11);
+      else if(t.bi===2)pages=Math.ceil(447/5);
+    }
+    goalCheckIn('reading',pages);
+  }else if(cat==='🎨'){
+    goalCheckIn('draw',3);
+  }else if(cat==='🎧'){
+    goalCheckIn('listen',1);
+  }else if(cat==='🏃'){
+    goalCheckIn('posture',1);
+  }else if(cat==='📝'){
+    goalCheckIn('exam',1);
+  }else if(cat==='🖥️'){
+    goalCheckIn('ncre',1);
+  }else if(cat==='🗣️'){
+    goalCheckIn('pth',1);
+  }
+}
+
+
+// ========== 渲染 ==========
+function renderToday(){
+  const d=getDayNum();
+  const info=PLAN[d];
+  if(!info)return;
+  document.getElementById('todayTitle').textContent='📌 D'+d+' · '+info.date+' '+info.wd;
+  document.getElementById('todayHint').textContent=info.hint||'';
+
+  const done=lsGet('done_'+d,[]);
+  const coDone=lsGet('co_done_'+d,[]);
+  const bd=document.getElementById('todayTasks');
+  bd.innerHTML='';
+
+  info.tasks.forEach((t,i)=>{
+    const div=document.createElement('div');
+    div.className='step'+(done.includes(i)?' done':'');
+    let title;
+if(t.bi!==undefined){const bk=RPLAN[t.bi];const ppd=Math.ceil(bk.p/bk.d);const sp=(t.bd-1)*ppd+1;const ep=Math.min(t.bd*ppd,bk.p);title=t.t+' '+bk.n+'第'+sp+'-'+ep+'页';}else{title=t.s?t.t+' '+t.s:t.t;}
+    div.innerHTML='<div class="chk"></div><div class="stxt">'+(t.cat?t.cat+' ':'')+title+'</div>';
+    div.onclick=function(){toggleTask(d,i,this,t);};
+    bd.appendChild(div);
+  });
+
+  const todayDone=lsGet('done_'+d,[]);
+  const todayTaskKeys=info.tasks.map(t=>t.t);
+  const todayDoneKeys=todayDone.map(i=>todayTaskKeys[i]||'');
+  let carryOvers=[];
+  for(let prev=1;prev<d;prev++){
+    const pInfo=PLAN[prev];
+    if(!pInfo)continue;
+    const prevDone=lsGet('done_'+prev,[]);
+    if(prevDone.length>=pInfo.tasks.length)continue;
+    pInfo.tasks.forEach((t,idx)=>{
+      if(!prevDone.includes(idx)){
+        if(todayDoneKeys.includes(t.t))return;
+        carryOvers.push({task:t,fromDay:prev,idx:idx});
+      }
+    });
+  }
+
+  if(carryOvers.length>0){
+    const secDiv=document.createElement('div');
+    secDiv.className='sec-title';
+    secDiv.textContent='📦 延期任务（'+carryOvers.length+'项）';
+    bd.appendChild(secDiv);
+    carryOvers.forEach((co,ci)=>{
+      const div=document.createElement('div');
+      const key=co.fromDay+'_'+co.idx;
+      div.className='step'+(coDone.includes(key)?' done':'');
+      const t=co.task;
+      let coTitle;
+if(t.bi!==undefined){const bk=RPLAN[t.bi];const ppd=Math.ceil(bk.p/bk.d);const sp=(t.bd-1)*ppd+1;const ep=Math.min(t.bd*ppd,bk.p);coTitle=t.t+' '+bk.n+'第'+sp+'-'+ep+'页';}else{coTitle=t.s?t.t+' '+t.s:t.t;}
+      div.innerHTML='<div class="chk"></div><div class="stxt">'+(t.cat?t.cat+' ':'')+'<span style="color:#e09015;font-size:11px;font-weight:600;">延期 </span>'+coTitle+'</div>';
+      div.onclick=function(){toggleCoTask(d,key,this,t);};
+      bd.appendChild(div);
+    });
+  }
+
+  const total=info.tasks.length+carryOvers.length;
+  const doneN=done.length+coDone.length;
+  document.getElementById('sToday').textContent=doneN+'/'+total;
+
+  let allDone=0,allTotal=0;
+  for(let i=1;i<=40;i++){
+    allTotal+=PLAN[i].tasks.length;
+    allDone+=lsGet('done_'+i,[]).length;
+    allDone+=lsGet('co_done_'+i,[]).length;
+  }
+  document.getElementById('sTotal').textContent=Math.round(allDone/allTotal*100)+'%';
+
+  let streak=0;
+  for(let i=d;i>=1;i--){
+    const dd=lsGet('done_'+i,[]);
+    const co=lsGet('co_done_'+i,[]);
+    if(dd.length>0||co.length>0){streak++;}else{break;}
+  }
+  if(streak===0){
+    for(let i=d+1;i<=40;i++){
+      const dd=lsGet('done_'+i,[]);
+      const co=lsGet('co_done_'+i,[]);
+      if(dd.length>0||co.length>0){streak++;}else{break;}
+    }
+  }
+  document.getElementById('sStreak').textContent=streak;
+}
+
+function toggleTask(day,idx,el,task){
+  const done=lsGet('done_'+day,[]);
+  const p=done.indexOf(idx);
+  const wasDone=p>=0;
+  if(wasDone){done.splice(p,1);el.classList.remove('done');}
+  else{done.push(idx);el.classList.add('done');linkTaskToGoal(task);}
+  lsSet('done_'+day,done);
+  refreshStats(day);
+  renderLevelBar();
+}
+
+function toggleCoTask(day,key,el,task){
+  const coDone=lsGet('co_done_'+day,[]);
+  const p=coDone.indexOf(key);
+  const wasDone=p>=0;
+  if(wasDone){coDone.splice(p,1);el.classList.remove('done');}
+  else{coDone.push(key);el.classList.add('done');linkTaskToGoal(task);}
+  lsSet('co_done_'+day,coDone);
+  refreshStats(day);
+  renderLevelBar();
+}
+
+function refreshStats(day){
+  const d=getDayNum();
+  const info=PLAN[day];
+  const todayDone=lsGet('done_'+d,[]);
+  const todayTaskKeys=info.tasks.map(t=>t.t);
+  const todayDoneKeys=todayDone.map(i=>todayTaskKeys[i]||'');
+  let coTotal=0;
+  for(let prev=1;prev<day;prev++){
+    const pInfo=PLAN[prev];
+    if(!pInfo)continue;
+    const prevDone=lsGet('done_'+prev,[]);
+    if(prevDone.length>=pInfo.tasks.length)continue;
+    pInfo.tasks.forEach((t,idx)=>{
+      if(!prevDone.includes(idx)){
+        if(todayDoneKeys.includes(t.t))return;
+        coTotal++;
+      }
+    });
+  }
+  const done=lsGet('done_'+day,[]);
+  const coDone=lsGet('co_done_'+day,[]);
+  const total=info.tasks.length+coTotal;
+  const doneN=done.length+coDone.length;
+  document.getElementById('sToday').textContent=doneN+'/'+total;
+  let allDone=0,allTotal=0;
+  for(let i=1;i<=40;i++){
+    allTotal+=PLAN[i].tasks.length;
+    allDone+=lsGet('done_'+i,[]).length;
+    allDone+=lsGet('co_done_'+i,[]).length;
+  }
+  document.getElementById('sTotal').textContent=Math.round(allDone/allTotal*100)+'%';
+  let streak=0;
+  for(let i=d;i>=1;i--){
+    const dd=lsGet('done_'+i,[]);
+    const co=lsGet('co_done_'+i,[]);
+    if(dd.length>0||co.length>0){streak++;}else{break;}
+  }
+  if(streak===0){
+    for(let i=d+1;i<=40;i++){
+      const dd=lsGet('done_'+i,[]);
+      const co=lsGet('co_done_'+i,[]);
+      if(dd.length>0||co.length>0){streak++;}else{break;}
+    }
+  }
+  document.getElementById('sStreak').textContent=streak;
+}
+
+function renderWeek(){
+  const d=getDayNum();
+  const today=new Date();
+  const dow=today.getDay()||7;
+  const mon=new Date(today);mon.setDate(today.getDate()-(dow-1));
+  const weekDays=[];
+  for(let i=0;i<7;i++){
+    const dt=new Date(mon);dt.setDate(mon.getDate()+i);
+    dt.setHours(5,0,0,0);
+    const dn=Math.floor((dt-START)/86400000)+1;
+    if(dn>=1&&dn<=40)weekDays.push(dn);
+  }
+  if(weekDays.length===0){document.getElementById('weekList').innerHTML='<div style="color:#aaa">当前不在计划范围内</div>';return;}
+  const first=PLAN[weekDays[0]],last=PLAN[weekDays[weekDays.length-1]];
+  const weekNum=Math.ceil(weekDays[0]/7);
+  const weekLabel=weekNum===1?' 🏁 首周':' 第'+weekNum+'周';
+  document.getElementById('weekRange').textContent=first.date+'-'+last.date+weekLabel;
+  const cur=getDayNum();
+  let html='';
+  weekDays.forEach(dn=>{
+    const info=PLAN[dn];
+    if(!info)return;
+    const isToday=dn===cur;
+    const tasks=info.tasks.map(t=>{let txt;if(t.bi!==undefined){const bk=RPLAN[t.bi];const ppd=Math.ceil(bk.p/bk.d);const sp=(t.bd-1)*ppd+1;const ep=Math.min(t.bd*ppd,bk.p);txt=t.t+' '+bk.n+'第'+sp+'-'+ep+'页';}else{txt=t.s?t.t+' '+t.s:t.t;}return t.cat+' '+txt;}).join(' ｜ ');
+    html+='<div'+(isToday?' class="today"':'')+'><strong>D'+dn+' '+info.wd+(isToday?' ← 今天':'')+'</strong> '+tasks+'</div>';
+  });
+  document.getElementById('weekList').innerHTML=html;
+}
+
+function renderProgress(){
+  const chapters=[
+    {name:'上册·先秦文学',total:8,done:0},
+    {name:'上册·秦汉文学',total:8,done:0},
+    {name:'中册·魏晋南北朝',total:7,done:0},
+    {name:'中册·隋唐五代',total:11,done:0},
+    {name:'下册·宋代文学',total:5,done:0},
+    {name:'下册·元明清近代',total:6,done:0}
+  ];
+  const d=getDayNum();
+  const litDays=[
+    {range:[2,9],ch:0},
+    {range:[10,17],ch:1},
+    {range:[18,24],ch:2},
+    {range:[25,35],ch:3},
+    {range:[36,40],ch:4},
+    {range:[41,41],ch:5}
+  ];
+  litDays.forEach(l=>{
+    let done=0;
+    for(let i=l.range[0];i<=l.range[1];i++){
+      if(i<=d){
+        const dd=lsGet('done_'+i,[]);
+        if(dd.length>0)done++;
+      }
+    }
+    chapters[l.ch].done=Math.min(done,chapters[l.ch].total);
+  });
+  let litHtml='';
+  chapters.forEach(c=>{
+    const pct=Math.round(c.done/c.total*100);
+    litHtml+='<div class="prog"><div class="prog-label">'+c.name+'</div><div class="prog-bar"><div class="fill" style="width:'+pct+'%"></div></div><div class="prog-info"><span>'+c.done+'/'+c.total+' 章</span><span>'+pct+'%</span></div></div>';
+  });
+  document.getElementById('litProgress').innerHTML=litHtml;
+
+  const listenSets=[[2,8],[9,15],[16,22],[23,29],[30,36]];
+  let setsDone=0;
+  listenSets.forEach(s=>{
+    let allDone=true;
+    for(let i=s[0];i<=s[1];i++){
+      if(i>40||i<d){const dd=lsGet('done_'+i,[]);if(dd.length===0)allDone=false;}
+      else allDone=false;
+    }
+    if(allDone&&d>=s[1])setsDone++;
+  });
+  document.getElementById('listenFill').style.width=Math.round(setsDone/6*100)+'%';
+  document.getElementById('listenInfo').textContent=setsDone+'/6 套';
+
+  renderWeight();
+}
+
+function renderWeight(){
+  const logs=lsGet('weights',[]);
+  const el=document.getElementById('weightLog');
+  if(logs.length===0){el.textContent='还没有记录';return;}
+  el.innerHTML=logs.slice().reverse().map(l=>'<div>'+l.date+'：'+l.val+'斤</div>').join('');
+}
+function saveWeight(){
+  const input=document.getElementById('weightInput');
+  const val=input.value.trim();
+  if(!val)return;
+  const logs=lsGet('weights',[]);
+  const now=new Date();
+  logs.push({date:(now.getMonth()+1)+'.'+now.getDate(),val:val});
+  lsSet('weights',logs);
+  input.value='';
+  renderWeight();
+  // Also count toward weight goal
+  goalCheckIn('weight',1);
+}
+
+// ========== 数据管理 ==========
+function exportData(){
+  const data={};
+  for(let i=0;i<localStorage.length;i++){
+    const k=localStorage.key(i);
+    if(k&&k.startsWith('dw_')){
+      try{data[k]=JSON.parse(localStorage.getItem(k));}catch(e){data[k]=localStorage.getItem(k);}
+    }
+  }
+  const blob=new Blob([JSON.stringify(data,null,2)],{type:'application/json'});
+  const url=URL.createObjectURL(blob);
+  const a=document.createElement('a');
+  a.href=url;a.download='工作台数据_'+new Date().toISOString().slice(0,10)+'.json';
+  a.click();URL.revokeObjectURL(url);
+}
+
+function importData(event){
+  const file=event.target.files[0];
+  if(!file)return;
+  const reader=new FileReader();
+  reader.onload=function(e){
+    try{
+      const data=JSON.parse(e.target.result);
+      if(!confirm('导入将覆盖当前所有数据，确认继续？'))return;
+      // Clear existing dw_ keys
+      const keysToRemove=[];
+      for(let i=0;i<localStorage.length;i++){
+        const k=localStorage.key(i);
+        if(k&&k.startsWith('dw_'))keysToRemove.push(k);
+      }
+      keysToRemove.forEach(k=>localStorage.removeItem(k));
+      // Import new data
+      Object.keys(data).forEach(k=>{
+        localStorage.setItem(k,JSON.stringify(data[k]));
+      });
+      alert('导入成功！');
+      location.reload();
+    }catch(err){alert('导入失败：文件格式错误');}
+  };
+  reader.readAsText(file);
+  event.target.value='';
+}
+
+function clearAllData(){
+  if(!confirm('⚠️ 确认清除所有数据？此操作不可恢复！'))return;
+  if(!confirm('再次确认：真的要清除所有数据吗？'))return;
+  const keysToRemove=[];
+  for(let i=0;i<localStorage.length;i++){
+    const k=localStorage.key(i);
+    if(k&&k.startsWith('dw_'))keysToRemove.push(k);
+  }
+  keysToRemove.forEach(k=>localStorage.removeItem(k));
+  alert('数据已清除，页面将刷新');
+  location.reload();
+}
+
+// ========== 时间 ==========
+function updateTime(){
+  const now=new Date();
+  const days=['星期日','星期一','星期二','星期三','星期四','星期五','星期六'];
+  const y=now.getFullYear(),m=now.getMonth()+1,d=now.getDate();
+  const h=String(now.getHours()).padStart(2,'0'),min=String(now.getMinutes()).padStart(2,'0');
+  document.getElementById('curDate').textContent=y+'年'+m+'月'+d+'日 '+days[now.getDay()];
+  document.getElementById('curTime').textContent=h+':'+min;
+}
+
+function renderPhase(){
+  const d=getDayNum();
+  const info=PLAN[d];
+  if(!info)return;
+  document.getElementById('phaseName').textContent=info.phase;
+  document.getElementById('phaseDays').textContent=info.date+' · D'+d;
+}
+
+// ========== 自动刷新 ==========
+let currentDayNum = getDayNum();
+
+function renderAll(){
+  renderPhase();
+  renderToday();
+  renderWeek();
+  renderProgress();
+  renderLevelBar();
+  initGoals();
+}
+
+function checkDayChange(){
+  const newDay = getDayNum();
+  if(newDay !== currentDayNum){
+    currentDayNum = newDay;
+    renderAll();
+  }
+}
+
+// ========== 数据版本检查 ==========
+(function checkDataVersion(){
+  const savedVer=parseInt(localStorage.getItem('dw_data_version')||'0');
+  if(savedVer===0){
+    localStorage.setItem('dw_data_version',String(DATA_VERSION));
+  } else if(savedVer!==DATA_VERSION){
+    const keysToRemove=[];
+    for(let i=0;i<localStorage.length;i++){
+      const k=localStorage.key(i);
+      if(k&&k.startsWith('dw_'))keysToRemove.push(k);
+    }
+    keysToRemove.forEach(k=>localStorage.removeItem(k));
+    localStorage.setItem('dw_data_version',String(DATA_VERSION));
+  }
+})();
+
+// ========== 初始化 ==========
+updateTime();
+setInterval(updateTime, 60000);
+setInterval(checkDayChange, 5 * 60 * 1000);
+renderAll();
+</script>
+</body>
+</html>
