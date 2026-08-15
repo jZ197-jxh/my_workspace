@@ -1007,7 +1007,15 @@ if(t.bi!==undefined){const bk=RPLAN[t.bi];const ppd=Math.ceil(bk.p/bk.d);const s
 
   const todayDone=lsGet('done_'+d,[]);
   const todayTaskFullKeys=info.tasks.map(t=>(t.t||'')+(t.s||'')+(t.bi!==undefined?'_'+t.bi+'_'+t.bd:''));
-  const todayDoneFullKeys=todayDone.map(i=>todayTaskFullKeys[i]||'');
+  // 已完成任务的 key 集合：今天完成的 + 之前作为延期补做的
+  const completedTaskKeys=new Set();
+  todayDone.forEach(i=>completedTaskKeys.add(todayTaskFullKeys[i]||''));
+  for(let dd=2;dd<d;dd++){
+    lsGet('co_done_'+dd,[]).forEach(key=>{
+      const p=key.indexOf('_');
+      if(p>0)completedTaskKeys.add(key.substring(p+1));
+    });
+  }
   let carryOvers=[];
   for(let prev=1;prev<d;prev++){
     const pInfo=PLAN[prev];
@@ -1017,7 +1025,7 @@ if(t.bi!==undefined){const bk=RPLAN[t.bi];const ppd=Math.ceil(bk.p/bk.d);const s
     pInfo.tasks.forEach((t,idx)=>{
       if(!prevDone.includes(idx)){
         const taskFullKey=(t.t||'')+(t.s||'')+(t.bi!==undefined?'_'+t.bi+'_'+t.bd:'');
-        if(todayDoneFullKeys.includes(taskFullKey))return;
+        if(completedTaskKeys.has(taskFullKey))return;
         carryOvers.push({task:t,fromDay:prev,idx:idx});
       }
     });
@@ -1095,8 +1103,15 @@ function refreshStats(day){
   const d=getDayNum();
   const info=PLAN[day];
   const todayDone=lsGet('done_'+d,[]);
-  const todayTaskKeys=info.tasks.map(t=>t.t);
-  const todayDoneKeys=todayDone.map(i=>todayTaskKeys[i]||'');
+  const todayTaskFullKeys=info.tasks.map(t=>(t.t||'')+(t.s||'')+(t.bi!==undefined?'_'+t.bi+'_'+t.bd:''));
+  const completedTaskKeys=new Set();
+  todayDone.forEach(i=>completedTaskKeys.add(todayTaskFullKeys[i]||''));
+  for(let dd=2;dd<day;dd++){
+    lsGet('co_done_'+dd,[]).forEach(key=>{
+      const p=key.indexOf('_');
+      if(p>0)completedTaskKeys.add(key.substring(p+1));
+    });
+  }
   let coTotal=0;
   for(let prev=1;prev<day;prev++){
     const pInfo=PLAN[prev];
@@ -1105,7 +1120,8 @@ function refreshStats(day){
     if(prevDone.length>=pInfo.tasks.length)continue;
     pInfo.tasks.forEach((t,idx)=>{
       if(!prevDone.includes(idx)){
-        if(todayDoneKeys.includes(t.t))return;
+        const taskFullKey=(t.t||'')+(t.s||'')+(t.bi!==undefined?'_'+t.bi+'_'+t.bd:'');
+        if(completedTaskKeys.has(taskFullKey))return;
         coTotal++;
       }
     });
