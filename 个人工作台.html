@@ -252,7 +252,7 @@ body{font-family:-apple-system,"PingFang SC","Hiragino Sans GB","Microsoft YaHei
 // ========== 41天完整任务数据 ==========
 const START=new Date(2026,7,13);
 const RPLAN=[{n:'《蛇结》',d:4,p:380},{n:'《赫索格》',d:11,p:979},{n:'《我弥留之际》',d:5,p:447}];
-const DATA_VERSION=108;
+const DATA_VERSION=109;
 const PLAN={
 1:{date:"8.13",wd:"周四",phase:"第一阶段 · 启动期",hint:"正式进入节奏",tasks:[
   {cat:"📚",t:"文学史",s:"总绪论"},
@@ -729,6 +729,104 @@ function isReadingTask(t){
   return !t.includes('小学教材')&&!t.includes('想法记录');
 }
 
+function recalcAllGoalProgress(){
+  // 每次页面加载时重新计算所有目标的进度，从实际完成数据出发
+  // 避免 goal.done 递增累计导致的重复计算问题
+  const goals=lsGet('goals',null);
+  if(!goals)return;
+
+  let litCount=0,readPages=0,drawTasks=0,listenCount=0,postureCount=0,examCount=0,ncreCount=0,pthCount=0;
+  const readingBooks=[{name:'蛇结',pages:380,days:4},{name:'赫索格',pages:979,days:11},{name:'我弥留之际',pages:447,days:5}];
+
+  // 1. 扫描 done_X（今日任务完成记录）
+  for(let i=1;i<=40;i++){
+    const info=PLAN[i];if(!info)continue;
+    const done=lsGet('done_'+i,[]);
+    done.forEach(idx=>{
+      if(idx>=info.tasks.length)return;
+      const t=info.tasks[idx];
+      if(t.cat==='📚')litCount++;
+      else if(t.cat==='🎧')listenCount++;
+      else if(t.cat==='🏃')postureCount++;
+      else if(t.cat==='🖥️')ncreCount++;
+      else if(t.cat==='🗣️')pthCount++;
+      else if(t.cat==='📝')examCount++;
+      else if(t.cat==='🎨')drawTasks++;
+      else if(t.cat==='📕'&&isReadingTask(t.t||'')){
+        if(typeof t.bi==='number'&&typeof t.bd==='number'&&readingBooks[t.bi]){
+          readPages+=Math.ceil(readingBooks[t.bi].pages/readingBooks[t.bi].days);
+        }else{
+          readPages+=1;
+        }
+      }
+    });
+  }
+
+  // 2. 扫描 co_done_X（延期任务完成记录）
+  //    新格式：fromDay_taskFullKey，例如 "1_阅读_0_2" 或 "1_文学史总绪论"
+  //    旧格式：fromDay_idx（纯数字索引），无法恢复，忽略
+  for(let i=1;i<=40;i++){
+    const coDone=lsGet('co_done_'+i,[]);
+    if(!coDone||coDone.length===0)continue;
+    coDone.forEach(key=>{
+      if(!key||typeof key!=='string')return;
+      const p=key.indexOf('_');
+      if(p<=0)return; // 无效格式
+      const rest=key.substring(p+1);
+      // 判断是否为旧格式（纯数字索引）：rest 全是数字
+      if(/^\d+$/.test(rest))return; // 旧格式，无法恢复，跳过
+
+      // 新格式：需要根据 PLAN 中的任务匹配 taskFullKey
+      // taskFullKey = (t.t||'')+(t.s||'')+(t.bi!==undefined?'_'+t.bi+'_'+t.bd:'')
+      // 遍历所有 PLAN 天的任务，找到匹配的任务
+      let found=false;
+      for(let di=1;di<=40;di++){
+        const info=PLAN[di];if(!info)continue;
+        for(let ti=0;ti<info.tasks.length;ti++){
+          const t=info.tasks[ti];
+          const tfk=(t.t||'')+(t.s||'')+(t.bi!==undefined?'_'+t.bi+'_'+t.bd:'');
+          if(tfk===rest){
+            // 找到匹配的任务，分类计数
+            if(t.cat==='📚')litCount++;
+            else if(t.cat==='🎧')listenCount++;
+            else if(t.cat==='🏃')postureCount++;
+            else if(t.cat==='🖥️')ncreCount++;
+            else if(t.cat==='🗣️')pthCount++;
+            else if(t.cat==='📝')examCount++;
+            else if(t.cat==='🎨')drawTasks++;
+            else if(t.cat==='📕'&&isReadingTask(t.t||'')){
+              if(typeof t.bi==='number'&&typeof t.bd==='number'&&readingBooks[t.bi]){
+                readPages+=Math.ceil(readingBooks[t.bi].pages/readingBooks[t.bi].days);
+              }else{
+                readPages+=1;
+              }
+            }
+            found=true;
+            break;
+          }
+        }
+        if(found)break;
+      }
+      // 未找到匹配的任务（可能数据已变化），忽略不计
+    });
+  }
+
+  // 3. 更新 goals.done
+  goals.forEach(g=>{
+    if(g.id==='lit')g.done=litCount;
+    if(g.id==='reading')g.done=readPages;
+    if(g.id==='draw')g.done=drawTasks*3; // 每个画画任务计3节
+    if(g.id==='listen')g.done=listenCount;
+    if(g.id==='posture')g.done=postureCount;
+    if(g.id==='exam')g.done=examCount;
+    if(g.id==='ncre')g.done=ncreCount;
+    if(g.id==='pth')g.done=pthCount;
+    // weight 目标不参与此计算（手动记录）
+  });
+
+  lsSet('goals',goals);
+}
+
 function getGoalProgress(id){
   const goals=lsGet('goals',DEFAULT_GOALS);
   const g=goals.find(g=>g.id===id);
@@ -745,7 +843,10 @@ function goalCheckIn(id,amount){
   const today=getTodayStr();
   _lastGoalAction={id:id,prevDone:g.done,prevStreak:g.streak,prevLastDate:g.lastDate};
   g.done+=amount;
-  if(g.lastDate!==today){
+  // 防止 done 变为负数
+  if(g.done<0)g.done=0;
+  // 只有增加进度时才更新连续天数和最后打卡日期
+  if(amount>0&&g.lastDate!==today){
     const yest=new Date();yest.setDate(yest.getDate()-1);
     const yestStr=(yest.getMonth()+1)+'.'+(yest.getDate());
     if(g.lastDate===yestStr||g.lastDate===''){g.streak++;}
@@ -952,21 +1053,16 @@ function addReward(){
 
 // ========== 任务-目标联动 ==========
 function linkTaskToGoal(task){
-  const goals=lsGet('goals',DEFAULT_GOALS);
   const cat=task.cat||'';
   const t=task.t||'';
+  const bi=task.bi;
+  const books=[{name:'蛇结',pages:380,days:4},{name:'赫索格',pages:979,days:11},{name:'我弥留之际',pages:447,days:5}];
   if(cat==='📚'){
     goalCheckIn('lit',1);
   }else if(cat==='📕'&&isReadingTask(t)){
-    // Calculate actual pages for this reading task
-    const books=[{name:'蛇结',pages:380},{name:'赫索格',pages:979},{name:'我弥留之际',pages:447}];
     let pages=1;
-    if(typeof t.bi==='number'&&typeof t.bd==='number'&&books[t.bi]){
-      const book=books[t.bi];
-      pages=Math.ceil(book.pages/4); // 蛇结4天，赫索格11天，我弥留之际5天
-      if(t.bi===0)pages=Math.ceil(380/4);
-      else if(t.bi===1)pages=Math.ceil(979/11);
-      else if(t.bi===2)pages=Math.ceil(447/5);
+    if(typeof bi==='number'&&typeof task.bd==='number'&&books[bi]){
+      pages=Math.ceil(books[bi].pages/books[bi].days);
     }
     goalCheckIn('reading',pages);
   }else if(cat==='🎨'){
@@ -981,6 +1077,35 @@ function linkTaskToGoal(task){
     goalCheckIn('ncre',1);
   }else if(cat==='🗣️'){
     goalCheckIn('pth',1);
+  }
+}
+
+function unlinkTaskFromGoal(task){
+  // 取消打钩时，减少对应目标的积分
+  const cat=task.cat||'';
+  const t=task.t||'';
+  const bi=task.bi;
+  const books=[{name:'蛇结',pages:380,days:4},{name:'赫索格',pages:979,days:11},{name:'我弥留之际',pages:447,days:5}];
+  if(cat==='📚'){
+    goalCheckIn('lit',-1);
+  }else if(cat==='📕'&&isReadingTask(t)){
+    let pages=1;
+    if(typeof bi==='number'&&typeof task.bd==='number'&&books[bi]){
+      pages=Math.ceil(books[bi].pages/books[bi].days);
+    }
+    goalCheckIn('reading',-pages);
+  }else if(cat==='🎨'){
+    goalCheckIn('draw',-3);
+  }else if(cat==='🎧'){
+    goalCheckIn('listen',-1);
+  }else if(cat==='🏃'){
+    goalCheckIn('posture',-1);
+  }else if(cat==='📝'){
+    goalCheckIn('exam',-1);
+  }else if(cat==='🖥️'){
+    goalCheckIn('ncre',-1);
+  }else if(cat==='🗣️'){
+    goalCheckIn('pth',-1);
   }
 }
 
@@ -1085,7 +1210,7 @@ function toggleTask(day,idx,el,task){
   const done=lsGet('done_'+day,[]);
   const p=done.indexOf(idx);
   const wasDone=p>=0;
-  if(wasDone){done.splice(p,1);el.classList.remove('done');}
+  if(wasDone){done.splice(p,1);el.classList.remove('done');unlinkTaskFromGoal(task);}
   else{done.push(idx);el.classList.add('done');linkTaskToGoal(task);}
   lsSet('done_'+day,done);
   refreshStats(day);
@@ -1096,7 +1221,7 @@ function toggleCoTask(day,key,el,task){
   const coDone=lsGet('co_done_'+day,[]);
   const p=coDone.indexOf(key);
   const wasDone=p>=0;
-  if(wasDone){coDone.splice(p,1);el.classList.remove('done');}
+  if(wasDone){coDone.splice(p,1);el.classList.remove('done');unlinkTaskFromGoal(task);}
   else{coDone.push(key);el.classList.add('done');linkTaskToGoal(task);}
   lsSet('co_done_'+day,coDone);
   refreshStats(day);
@@ -1351,6 +1476,8 @@ function renderPhase(){
 let currentDayNum = getDayNum();
 
 function renderAll(){
+  // 每次渲染前重新计算所有目标进度，确保积分与实际完成数据一致
+  recalcAllGoalProgress();
   renderPhase();
   renderToday();
   renderWeek();
