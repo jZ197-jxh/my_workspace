@@ -630,17 +630,18 @@ function calcTotalEarnedPoints(){
 function calcAvailablePoints(){
   const earned=calcTotalEarnedPoints();
   const spent=lsGet('rewards_spent',0);
-  return Math.max(0,Math.floor(earned-spent));
+  return Math.floor(earned-spent);
 }
 
 function renderLevelBar(){
   const pts=calcAvailablePoints();
-  const lv=getLevelFromPoints(pts);
+  const displayPts=Math.max(0,pts);
+  const lv=getLevelFromPoints(displayPts);
   const info=getLevelName(lv);
   const curLevelPts=getCumulativePoints(lv);
   const nextLevelPts=getCumulativePoints(lv+1);
   const needed=nextLevelPts-curLevelPts;
-  const progress=needed>0?Math.min(100,Math.round((pts-curLevelPts)/needed*100)):100;
+  const progress=needed>0?Math.min(100,Math.round((displayPts-curLevelPts)/needed*100)):100;
 
   document.getElementById('lvName').textContent=info.emoji+' '+info.name.replace(/^.+?\s/,'')+' Lv.'+lv;
   document.getElementById('lvPts').textContent=pts+' 积分';
@@ -917,8 +918,9 @@ function exchangeReward(idx){
     cost=amt; // 1元=1分
   }
   const pts=calcAvailablePoints();
-  if(pts<cost){alert('积分不足！需要 '+cost+' 分，当前 '+pts+' 分');return;}
-  if(!confirm('确认兑换「'+r.name+'」？消耗 '+cost+' 积分'))return;
+  if(!r.custom&&pts<cost){alert('积分不足！需要 '+cost+' 分，当前 '+pts+' 分');return;}
+  const ptsWarn=r.custom&&pts<cost?'⚠️ 当前积分不足，将赊账 '+Math.abs(pts-cost)+' 分\n':'';
+  if(!confirm(ptsWarn+'确认兑换「'+r.name+'」？消耗 '+cost+' 积分'))return;
 
   const spent=lsGet('rewards_spent',0)+cost;
   lsSet('rewards_spent',spent);
