@@ -1041,13 +1041,14 @@ if(t.bi!==undefined){const bk=RPLAN[t.bi];const ppd=Math.ceil(bk.p/bk.d);const s
     bd.appendChild(secDiv);
     carryOvers.forEach((co,ci)=>{
       const div=document.createElement('div');
-      const key=co.fromDay+'_'+co.idx;
+      const t2=co.task;
+      const taskFullKey=(t2.t||'')+(t2.s||'')+(t2.bi!==undefined?'_'+t2.bi+'_'+t2.bd:'');
+      const key=co.fromDay+'_'+taskFullKey;
       div.className='step'+(coDone.includes(key)?' done':'');
-      const t=co.task;
       let coTitle;
-if(t.bi!==undefined){const bk=RPLAN[t.bi];const ppd=Math.ceil(bk.p/bk.d);const sp=(t.bd-1)*ppd+1;const ep=Math.min(t.bd*ppd,bk.p);coTitle=t.t+' '+bk.n+'第'+sp+'-'+ep+'页';}else{coTitle=t.s?t.t+' '+t.s:t.t;}
-      div.innerHTML='<div class="chk"></div><div class="stxt">'+(t.cat?t.cat+' ':'')+'<span style="color:#e09015;font-size:11px;font-weight:600;">延期 </span>'+coTitle+'</div>';
-      div.onclick=function(){toggleCoTask(d,key,this,t);};
+if(t2.bi!==undefined){const bk=RPLAN[t2.bi];const ppd=Math.ceil(bk.p/bk.d);const sp=(t2.bd-1)*ppd+1;const ep=Math.min(t2.bd*ppd,bk.p);coTitle=t2.t+' '+bk.n+'第'+sp+'-'+ep+'页';}else{coTitle=t2.s?t2.t+' '+t2.s:t2.t;}
+      div.innerHTML='<div class="chk"></div><div class="stxt">'+(t2.cat?t2.cat+' ':'')+'<span style="color:#e09015;font-size:11px;font-weight:600;">延期 </span>'+coTitle+'</div>';
+      div.onclick=function(){toggleCoTask(d,key,this,t2);};
       bd.appendChild(div);
     });
   }

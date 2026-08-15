@@ -154,8 +154,16 @@ function render(){
   const checked=lsGet('done_'+day,[]);
   const coChecked=lsGet('co_done_'+day,[]);
   const tasks=info.tasks;
-  const todayTaskKeys=tasks.map(t=>t.t);
-  const todayDoneKeys=checked.map(i=>todayTaskKeys[i]||'');
+  // 已完成任务的完整 key 集合（今天完成的 + 之前作为延期补做的）
+  const todayTaskFullKeys=tasks.map(t=>(t.t||'')+(t.s||'')+(t.bi!==undefined?'_'+t.bi+'_'+t.bd:''));
+  const completedTaskKeys=new Set();
+  checked.forEach(i=>completedTaskKeys.add(todayTaskFullKeys[i]||''));
+  for(let dd=2;dd<day;dd++){
+    lsGet('co_done_'+dd,[]).forEach(key=>{
+      const p=key.indexOf('_');
+      if(p>0)completedTaskKeys.add(key.substring(p+1));
+    });
+  }
 
   // 收集延期任务
   let carryOvers=[];
@@ -166,7 +174,8 @@ function render(){
     if(prevDone.length>=pInfo.tasks.length)continue;
     pInfo.tasks.forEach((t,idx)=>{
       if(!prevDone.includes(idx)){
-        if(todayDoneKeys.includes(t.t))return;
+        const taskFullKey=(t.t||'')+(t.s||'')+(t.bi!==undefined?'_'+t.bi+'_'+t.bd:'');
+        if(completedTaskKeys.has(taskFullKey))return;
         carryOvers.push({task:t,fromDay:prev,idx:idx});
       }
     });
@@ -189,11 +198,13 @@ function render(){
   if(carryOvers.length>0){
     html+='<div style="font-size:11px;font-weight:600;color:var(--text3);padding:6px 6px 2px;letter-spacing:.3px">📦 延期任务（'+carryOvers.length+'项）</div>';
     carryOvers.forEach((co)=>{
-      const key=co.fromDay+'_'+co.idx;
+      const t2=co.task;
+      const taskFullKey=(t2.t||'')+(t2.s||'')+(t2.bi!==undefined?'_'+t2.bi+'_'+t2.bd:'');
+      const key=co.fromDay+'_'+taskFullKey;
       const isChecked=coChecked.includes(key);
-      const title=getTaskTitle(co.task);
+      const title=getTaskTitle(t2);
       html+=`<div class="task-item ${isChecked?'checked':''}" onclick="toggleCoTask('${key}')">
-        <div class="task-emoji">${co.task.cat}</div>
+        <div class="task-emoji">${t2.cat}</div>
         <div class="task-text"><span style="color:#e09015;font-size:11px;font-weight:600">延期 </span>${title}</div>
         <div class="checkbox"></div>
       </div>`;
