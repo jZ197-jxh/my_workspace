@@ -22,7 +22,6 @@ body{
   border:1.5px solid var(--bg3);
   box-shadow:0 2px 12px rgba(231,76,60,.06);
 }
-/* 顶栏 */
 .top{display:flex;align-items:center;justify-content:space-between;margin-bottom:6px}
 .date-text{font-size:11.5px;font-weight:600;color:var(--text2)}
 .d-tag{
@@ -30,37 +29,39 @@ body{
   background:linear-gradient(135deg,var(--red),var(--red-d));
   padding:2px 9px;border-radius:8px;
 }
-/* 核心数字 */
 .core{text-align:center;padding:4px 0 8px}
 .pages-line{display:flex;align-items:baseline;justify-content:center;gap:2px}
 .pages-done{font-size:34px;font-weight:900;color:var(--red);line-height:1.1}
 .pages-sep{font-size:14px;font-weight:600;color:var(--text3);margin:0 1px}
 .pages-total{font-size:14px;font-weight:700;color:var(--text3)}
 .pages-unit{font-size:11px;font-weight:600;color:var(--text3);margin-left:2px}
-/* 百分比 */
 .pct-row{font-size:12px;color:var(--text2);margin:2px 0 8px;text-align:center}
 .pct-val{font-weight:700;color:var(--red-d)}
-/* 进度条 */
 .bar-outer{width:100%;height:10px;background:var(--bg2);border-radius:5px;overflow:hidden}
 .bar-fill{
   height:100%;border-radius:5px;
   background:linear-gradient(90deg,var(--red-l),var(--red));
   transition:width .8s cubic-bezier(.22,1,.36,1);min-width:3px;
 }
-/* 底部信息 */
 .bottom{display:flex;align-items:center;justify-content:space-between;margin-top:10px}
 .streak{font-size:12px;color:var(--text2);font-weight:600}
 .streak span{color:var(--red);font-size:16px;font-weight:800}
 .book{font-size:11px;color:var(--text3);max-width:55%;text-align:right;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
-/* 打卡 */
 .footer{margin-top:10px;text-align:center}
 .footer-checked{font-size:11.5px;color:#27ae60;font-weight:600}
-.footer-btn{
-  display:inline-block;font-size:11.5px;color:var(--white);
+.btn-row{display:flex;gap:6px;justify-content:center;margin-top:10px}
+.page-btn{
+  display:inline-flex;align-items:center;justify-content:center;gap:3px;
+  font-size:12px;color:var(--white);font-weight:700;
   background:linear-gradient(135deg,var(--red-l),var(--red));
-  padding:6px 16px;border-radius:10px;text-decoration:none;font-weight:700;
+  padding:7px 14px;border-radius:10px;
+  border:none;cursor:pointer;
+  box-shadow:0 2px 6px rgba(231,76,60,.2);
+  transition:transform .15s,box-shadow .15s;
+  -webkit-tap-highlight-color:transparent;
 }
-/* 无数据 */
+.page-btn:active{transform:scale(.95);box-shadow:0 1px 3px rgba(231,76,60,.15)}
+.page-btn.minus{background:linear-gradient(135deg,var(--text3),#999);box-shadow:0 2px 6px rgba(0,0,0,.1)}
 .no-data{text-align:center;padding:24px 10px;color:var(--text3);font-size:12px;line-height:2}
 </style>
 </head>
@@ -88,6 +89,8 @@ function getNewDay(){
 }
 function calcD(today){return Math.max(1,Math.floor((today-START)/864e5)+1)}
 function fmtDate(d){return d.getFullYear()+'-'+String(d.getMonth()+1).padStart(2,'0')+'-'+String(d.getDate()).padStart(2,'0')}
+function lsGet(k,d){var v=localStorage.getItem(k);return v===null?d:JSON.parse(v)}
+function lsSet(k,v){localStorage.setItem(k,JSON.stringify(v))}
 function getGoal(){
   var goals=[];
   try{goals=JSON.parse(localStorage.getItem('dw_goals')||'[]')}catch(e){}
@@ -102,26 +105,30 @@ function getCurrentBook(dNum){
   }
   return null;
 }
-
+function addPage(delta){
+  var rg=getGoal();if(!rg)return;
+  var today=getNewDay(),todayStr=fmtDate(today);
+  rg.done=Math.max(0,(rg.done||0)+delta);
+  if(delta>0){rg.streak=((rg.lastDate&&rg.lastDate!==todayStr)?rg.streak+1:rg.streak||1);rg.lastDate=todayStr;}
+  var goals=lsGet('dw_goals',[]);
+  for(var i=0;i<goals.length;i++){if(goals[i].id==='reading'){goals[i]=rg;break;}}
+  lsSet('dw_goals',goals);
+  render();
+}
 function render(){
   var rg=getGoal();
   var box=document.getElementById('mainContent');
-  if(!rg){
-    box.innerHTML='<div class="no-data">请先打开工作台初始化数据</div>';
-    return;
-  }
-  var done=rg.done||0, total=rg.total||1806, streak=rg.streak||0, lastDate=rg.lastDate||'';
-  var today=getNewDay(), dNum=calcD(today), todayStr=fmtDate(today);
+  if(!rg){box.innerHTML='<div class="no-data">请先打开工作台初始化数据</div>';return;}
+  var done=rg.done||0,total=rg.total||1806,streak=rg.streak||0,lastDate=rg.lastDate||'';
+  var today=getNewDay(),dNum=calcD(today),todayStr=fmtDate(today);
   var pct=total>0?Math.min(100,Math.round(done/total*100)):0;
   var book=getCurrentBook(dNum);
-
   var footerHtml;
   if(lastDate===todayStr){
     footerHtml='<div class="footer"><span class="footer-checked">✅ 今日已打卡</span></div>';
-  } else {
-    footerHtml='<div class="footer"><a class="footer-btn" href="https://jz197-jxh.github.io/my_workspace/">去打卡 →</a></div>';
+  }else{
+    footerHtml='<div class="footer"></div>';
   }
-
   box.innerHTML=
     '<div class="core">'+
       '<div class="pages-line">'+
@@ -137,18 +144,18 @@ function render(){
       '<div class="streak">🔥 <span>'+streak+'</span>天</div>'+
       '<div class="book">'+(book||'全部读完 🎉')+'</div>'+
     '</div>'+
-    footerHtml;
+    footerHtml+
+    '<div class="btn-row">'+
+      '<button class="page-btn minus" onclick="addPage(-1)">−1页</button>'+
+      '<button class="page-btn" onclick="addPage(1)">+1页</button>'+
+    '</div>';
 }
-
 function updateHeader(){
   var today=getNewDay(),m=today.getMonth()+1,d=today.getDate(),wd=WEEKDAYS[today.getDay()];
   document.getElementById('dateText').textContent=m+'月'+d+'日 周'+wd;
   document.getElementById('dTag').textContent='D'+calcD(today);
 }
-
-updateHeader();
-render();
-
+updateHeader();render();
 setInterval(function(){
   var today=getNewDay(),m=today.getMonth()+1,d=today.getDate(),wd=WEEKDAYS[today.getDay()];
   var t=m+'月'+d+'日 周'+wd;
