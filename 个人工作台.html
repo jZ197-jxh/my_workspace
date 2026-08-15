@@ -217,9 +217,10 @@ body{font-family:-apple-system,"PingFang SC","Hiragino Sans GB","Microsoft YaHei
     <details class="data-mgmt">
       <summary>⚙️ 数据管理</summary>
       <div class="data-btns">
-        <button class="data-btn" onclick="exportData()">📤 导出JSON</button>
+        <button class="data-btn" onclick="exportData()"> 导出JSON</button>
         <button class="data-btn" onclick="document.getElementById('importFile').click()">📥 导入JSON</button>
         <button class="data-btn danger" onclick="clearAllData()">🗑️ 清除所有数据</button>
+        <button class="data-btn" onclick="debugLocalStorage()">🔍 查看存储</button>
       </div>
       <input type="file" id="importFile" accept=".json" style="display:none" onchange="importData(event)">
     </details>
@@ -1308,6 +1309,21 @@ function clearAllData(){
   keysToRemove.forEach(k=>localStorage.removeItem(k));
   alert('数据已清除，页面将刷新');
   location.reload();
+}
+
+function debugLocalStorage(){
+  const d=getDayNum();
+  let msg='当前D'+d+'\n\n';
+  msg+='dw_data_version: '+localStorage.getItem('dw_data_version')+'\n\n';
+  msg+='=== 各天完成状态 ===\n';
+  for(let i=1;i<=d;i++){
+    const done=lsGet('done_'+i,[]);
+    const coDone=lsGet('co_done_'+i,[]);
+    const total=PLAN[i]?PLAN[i].tasks.length:0;
+    msg+='D'+i+': done='+done.length+'/'+total+' '+JSON.stringify(done)+'\n';
+    msg+='  co_done='+coDone.length+' '+JSON.stringify(coDone)+'\n';
+  }
+  alert(msg);
 }
 
 // ========== 时间 ==========
