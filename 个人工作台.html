@@ -1444,13 +1444,36 @@ function debugLocalStorage(){
   let msg='当前D'+d+'\n\n';
   msg+='dw_data_version: '+localStorage.getItem('dw_data_version')+'\n\n';
   msg+='=== 各天完成状态 ===\n';
-  for(let i=1;i<=d;i++){
+  let totalDone=0,totalCoDone=0;
+  for(let i=1;i<=40;i++){
     const done=lsGet('done_'+i,[]);
     const coDone=lsGet('co_done_'+i,[]);
-    const total=PLAN[i]?PLAN[i].tasks.length:0;
-    msg+='D'+i+': done='+done.length+'/'+total+' '+JSON.stringify(done)+'\n';
-    msg+='  co_done='+coDone.length+' '+JSON.stringify(coDone)+'\n';
+    if(done.length>0||coDone.length>0){
+      const total=PLAN[i]?PLAN[i].tasks.length:0;
+      msg+='D'+i+': done='+done.length+'/'+total+' '+JSON.stringify(done)+'\n';
+      if(coDone.length>0) msg+='  co_done='+coDone.length+' '+JSON.stringify(coDone)+'\n';
+    }
+    totalDone+=done.length;
+    totalCoDone+=coDone.length;
   }
+  msg+='\n=== 汇总 ===\n';
+  msg+='总完成(常规): '+totalDone+'\n';
+  msg+='总完成(延期): '+totalCoDone+'\n\n';
+  msg+='=== 目标进度 ===\n';
+  const goals=lsGet('goals',null);
+  if(goals){
+    goals.forEach(g=>{
+      msg+=g.name+': done='+g.done+'/'+g.total+' streak='+g.streak+' lastDate='+g.lastDate+'\n';
+    });
+  }else{
+    msg+='goals: null (未初始化)\n';
+  }
+  msg+='\n=== 积分 ===\n';
+  const earned=calcTotalEarnedPoints();
+  const spent=lsGet('rewards_spent',0);
+  msg+='总获得(计算值): '+earned+'\n';
+  msg+='已消耗: '+spent+'\n';
+  msg+='可用积分: '+calcAvailablePoints()+'\n';
   alert(msg);
 }
 
