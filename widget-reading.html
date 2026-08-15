@@ -6,7 +6,7 @@
 <title>Widget - 阅读进度</title>
 <style>
 :root{
-  --red:#E74C3C;--red-l:#FF6B6B;--red-d:#C0392B;--red-dd:#A93226;
+  --red:#E74C3C;--red-l:#FF6B6B;--red-d:#C0392B;
   --bg:#FFF5F3;--bg2:#FFEBE7;--bg3:#FFD6CF;
   --white:#FFF;--text:#2D2D2D;--text2:#7A5C58;--text3:#B59A94;
 }
@@ -17,113 +17,58 @@ body{
   min-height:100vh;display:flex;align-items:center;justify-content:center;padding:10px;
 }
 .widget{
-  background:var(--white);border-radius:20px;width:100%;max-width:360px;
-  padding:16px 16px 14px;position:relative;overflow:hidden;
+  background:var(--white);border-radius:16px;width:100%;max-width:300px;
+  padding:14px 14px 12px;
   border:1.5px solid var(--bg3);
-  box-shadow:0 4px 20px rgba(231,76,60,.08),0 1px 3px rgba(231,76,60,.04);
-}
-/* 顶部装饰圆 */
-.widget::before{
-  content:'';position:absolute;top:-40px;right:-30px;
-  width:90px;height:90px;border-radius:50%;
-  background:radial-gradient(circle,var(--bg2) 0%,transparent 70%);
-  pointer-events:none;
+  box-shadow:0 2px 12px rgba(231,76,60,.06);
 }
 /* 顶栏 */
-.top{display:flex;align-items:center;justify-content:space-between;position:relative;z-index:1}
-.date-text{font-size:12.5px;font-weight:600;color:var(--text2);letter-spacing:.3px}
+.top{display:flex;align-items:center;justify-content:space-between;margin-bottom:6px}
+.date-text{font-size:11.5px;font-weight:600;color:var(--text2)}
 .d-tag{
-  font-size:11px;font-weight:800;color:var(--white);
+  font-size:10px;font-weight:800;color:var(--white);
   background:linear-gradient(135deg,var(--red),var(--red-d));
-  padding:3px 11px;border-radius:10px;letter-spacing:.5px;
+  padding:2px 9px;border-radius:8px;
 }
-/* 标题行 */
-.title-row{display:flex;align-items:center;gap:5px;margin:8px 0 6px;position:relative;z-index:1}
-.title-row .icon{font-size:15px}
-.title-row .txt{font-size:13.5px;font-weight:700;color:var(--text)}
-/* 核心数字区 */
-.core{text-align:center;padding:8px 0 6px;position:relative;z-index:1}
+/* 核心数字 */
+.core{text-align:center;padding:4px 0 8px}
 .pages-line{display:flex;align-items:baseline;justify-content:center;gap:2px}
-.pages-done{font-size:38px;font-weight:900;color:var(--red);line-height:1.1}
-.pages-sep{font-size:16px;font-weight:600;color:var(--text3);margin:0 1px}
-.pages-total{font-size:16px;font-weight:700;color:var(--text3)}
-.pages-unit{font-size:12px;font-weight:600;color:var(--text3);margin-left:3px}
-.pct-row{display:flex;align-items:center;justify-content:center;gap:4px;margin:4px 0 8px}
-.pct-val{font-size:14px;font-weight:700;color:var(--red-d)}
-.pct-emoji{font-size:16px}
+.pages-done{font-size:34px;font-weight:900;color:var(--red);line-height:1.1}
+.pages-sep{font-size:14px;font-weight:600;color:var(--text3);margin:0 1px}
+.pages-total{font-size:14px;font-weight:700;color:var(--text3)}
+.pages-unit{font-size:11px;font-weight:600;color:var(--text3);margin-left:2px}
+/* 百分比 */
+.pct-row{font-size:12px;color:var(--text2);margin:2px 0 8px;text-align:center}
+.pct-val{font-weight:700;color:var(--red-d)}
 /* 进度条 */
-.bar-outer{
-  position:relative;width:100%;height:16px;
-  background:var(--bg2);border-radius:8px;overflow:visible;
-}
-.bar-track{width:100%;height:100%;border-radius:8px;overflow:hidden;position:relative}
+.bar-outer{width:100%;height:10px;background:var(--bg2);border-radius:5px;overflow:hidden}
 .bar-fill{
-  height:100%;border-radius:8px;
-  background:linear-gradient(90deg,#FF8A80,var(--red-l),var(--red),var(--red-d));
-  transition:width .8s cubic-bezier(.22,1,.36,1);min-width:3px;position:relative;
+  height:100%;border-radius:5px;
+  background:linear-gradient(90deg,var(--red-l),var(--red));
+  transition:width .8s cubic-bezier(.22,1,.36,1);min-width:3px;
 }
-.bar-fill::after{
-  content:'';position:absolute;top:0;left:0;right:0;height:50%;
-  background:linear-gradient(180deg,rgba(255,255,255,.28),transparent);
-  border-radius:8px 8px 0 0;
-}
-/* 进度条上的小爱心 */
-.bar-heart{
-  position:absolute;top:50%;transform:translate(-50%,-50%);
-  font-size:12px;filter:drop-shadow(0 1px 2px rgba(0,0,0,.15));
-  transition:left .8s cubic-bezier(.22,1,.36,1);z-index:2;
-}
-/* 两列统计 */
-.stats{display:flex;gap:8px;margin-top:12px}
-.stat-card{
-  flex:1;background:var(--bg);border-radius:12px;
-  padding:10px 6px;text-align:center;
-  border:1px solid var(--bg2);
-}
-.stat-emoji{font-size:18px;display:block;margin-bottom:2px}
-.stat-val{font-size:20px;font-weight:900;color:var(--red);line-height:1.2}
-.stat-unit{font-size:10px;font-weight:600;color:var(--text3);margin-left:1px}
-.stat-label{font-size:10px;color:var(--text3);margin-top:2px;letter-spacing:.3px}
-/* 在读 */
-.book-row{
-  margin-top:10px;background:linear-gradient(135deg,var(--bg),var(--bg2));
-  border-radius:12px;padding:9px 11px;display:flex;align-items:center;gap:8px;
-  border:1px solid var(--bg2);
-}
-.book-icon{font-size:20px;flex-shrink:0}
-.book-info{flex:1;min-width:0}
-.book-name{font-size:13px;font-weight:700;color:var(--text);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
-.book-hint{font-size:10.5px;color:var(--text3);margin-top:1px}
-/* 底部 */
-.footer{margin-top:11px;text-align:center}
-.footer-checked{
-  display:inline-flex;align-items:center;gap:4px;
-  font-size:12.5px;color:#27ae60;font-weight:600;
-  background:#F0FFF4;padding:6px 14px;border-radius:10px;
-}
+/* 底部信息 */
+.bottom{display:flex;align-items:center;justify-content:space-between;margin-top:10px}
+.streak{font-size:12px;color:var(--text2);font-weight:600}
+.streak span{color:var(--red);font-size:16px;font-weight:800}
+.book{font-size:11px;color:var(--text3);max-width:55%;text-align:right;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+/* 打卡 */
+.footer{margin-top:10px;text-align:center}
+.footer-checked{font-size:11.5px;color:#27ae60;font-weight:600}
 .footer-btn{
-  display:inline-block;font-size:12.5px;color:var(--white);
-  background:linear-gradient(135deg,var(--red-l),var(--red),var(--red-d));
-  padding:8px 18px;border-radius:12px;text-decoration:none;font-weight:700;
-  letter-spacing:.3px;
-  box-shadow:0 2px 8px rgba(231,76,60,.25);
-  transition:transform .15s,box-shadow .15s;
+  display:inline-block;font-size:11.5px;color:var(--white);
+  background:linear-gradient(135deg,var(--red-l),var(--red));
+  padding:6px 16px;border-radius:10px;text-decoration:none;font-weight:700;
 }
-.footer-btn:active{transform:scale(.97);box-shadow:0 1px 4px rgba(231,76,60,.2)}
 /* 无数据 */
-.no-data{text-align:center;padding:28px 10px;color:var(--text3);font-size:13px;line-height:2}
-.no-data .big-emoji{font-size:36px;display:block;margin-bottom:6px}
+.no-data{text-align:center;padding:24px 10px;color:var(--text3);font-size:12px;line-height:2}
 </style>
 </head>
 <body>
-<div class="widget" id="widgetBox">
+<div class="widget">
   <div class="top">
     <span class="date-text" id="dateText">--</span>
     <span class="d-tag" id="dTag">D--</span>
-  </div>
-  <div class="title-row">
-    <span class="icon">📕</span>
-    <span class="txt">阅读进度</span>
   </div>
   <div id="mainContent"></div>
 </div>
@@ -131,9 +76,9 @@ body{
 var START=new Date(2026,7,13);
 var WEEKDAYS=['日','一','二','三','四','五','六'];
 var RPLAN=[
-  {n:'\u300A\u86C7\u7ED3\u300B',d:4,p:380},
-  {n:'\u300A\u8D6B\u7D22\u683C\u300B',d:11,p:979},
-  {n:'\u300A\u6211\u5F25\u7559\u4E4B\u9645\u300B',d:5,p:447}
+  {n:'《蛇结》',d:4,p:380},
+  {n:'《赫索格》',d:11,p:979},
+  {n:'《我弥留之际》',d:5,p:447}
 ];
 
 function getNewDay(){
@@ -153,51 +98,28 @@ function getCurrentBook(dNum){
   var cum=0;
   for(var i=0;i<RPLAN.length;i++){
     cum+=RPLAN[i].d;
-    if(dNum<=cum) return {name:RPLAN[i].n,idx:i+1,days:cum};
+    if(dNum<=cum) return RPLAN[i].n;
   }
   return null;
-}
-function moodEmoji(pct){
-  if(pct>=90) return '\uD83C\uDF89';
-  if(pct>=50) return '\uD83D\uDD25';
-  if(pct>=20) return '\uD83D\uDCAA';
-  return '\uD83C\uDF31';
 }
 
 function render(){
   var rg=getGoal();
   var box=document.getElementById('mainContent');
   if(!rg){
-    box.innerHTML='<div class="no-data"><span class="big-emoji">\uD83D\uDCED</span>请先打开工作台初始化数据<br><span style="font-size:11px;color:var(--text3)">访问 jz197-jxh.github.io/my_workspace/</span></div>';
+    box.innerHTML='<div class="no-data">请先打开工作台初始化数据</div>';
     return;
   }
   var done=rg.done||0, total=rg.total||1806, streak=rg.streak||0, lastDate=rg.lastDate||'';
   var today=getNewDay(), dNum=calcD(today), todayStr=fmtDate(today);
   var pct=total>0?Math.min(100,Math.round(done/total*100)):0;
-  var heartPos=Math.min(pct,96);
-
-  // 每日建议
-  var dailySug=0;
-  if(dNum<=20){
-    var remain=total-done, daysLeft=20-dNum+1;
-    dailySug=daysLeft>0?Math.ceil(remain/daysLeft):0;
-  }
-
-  // 在读
   var book=getCurrentBook(dNum);
-  var bookHtml;
-  if(book){
-    bookHtml='<div class="book-row"><span class="book-icon">\uD83D\uDCDA</span><div class="book-info"><div class="book-name">\u5F53\u524D\u5728\u8BFB\uFF1A'+book.n+'</div><div class="book-hint">\u7B2C '+book.idx+' \u9636\u6BB5 / \u5171 3 \u9636\u6BB5</div></div></div>';
-  } else {
-    bookHtml='<div class="book-row"><span class="book-icon">\uD83C\uDF89</span><div class="book-info"><div class="book-name">\u592A\u68D2\u5566\uFF01\u5168\u90E8\u8BFB\u5B8C\uFF01</div><div class="book-hint">\u6069\u683C\u5C14\u68EE\u4E5F\u4F1A\u4E3A\u4F60\u9F13\u638C\u7684 \uD83D\uDC4F</div></div></div>';
-  }
 
-  // 打卡状态
   var footerHtml;
   if(lastDate===todayStr){
-    footerHtml='<div class="footer"><span class="footer-checked">\u2705 \u4ECA\u65E5\u5DF2\u6253\u5361\uFF0C\u8D85\u68D2\u7684\u4F60\uFF01</span></div>';
+    footerHtml='<div class="footer"><span class="footer-checked">✅ 今日已打卡</span></div>';
   } else {
-    footerHtml='<div class="footer"><a class="footer-btn" href="https://jz197-jxh.github.io/my_workspace/">\uD83D\uDC49 \u4ECA\u5929\u8FD8\u6CA1\u8BFB\u54E6\uFF0C\u53BB\u6253\u5361 \u2192</a></div>';
+    footerHtml='<div class="footer"><a class="footer-btn" href="https://jz197-jxh.github.io/my_workspace/">去打卡 →</a></div>';
   }
 
   box.innerHTML=
@@ -206,21 +128,21 @@ function render(){
         '<span class="pages-done">'+done+'</span>'+
         '<span class="pages-sep">/</span>'+
         '<span class="pages-total">'+total+'</span>'+
-        '<span class="pages-unit">\u9875</span>'+
+        '<span class="pages-unit">页</span>'+
       '</div>'+
-      '<div class="pct-row"><span class="pct-emoji">'+moodEmoji(pct)+'</span><span class="pct-val">'+pct+'%</span></div>'+
-      '<div class="bar-outer"><div class="bar-track"><div class="bar-fill" style="width:'+pct+'%"></div></div><span class="bar-heart" style="left:'+heartPos+'%">\u2764\uFE0F</span></div>'+
+      '<div class="pct-row">'+pct+'%</div>'+
+      '<div class="bar-outer"><div class="bar-fill" style="width:'+pct+'%"></div></div>'+
     '</div>'+
-    '<div class="stats">'+
-      '<div class="stat-card"><span class="stat-emoji">\uD83D\uDD25</span><span class="stat-val">'+streak+'</span><span class="stat-unit">\u5929</span><div class="stat-label">\u8FDE\u7EED\u6253\u5361</div></div>'+
-      '<div class="stat-card"><span class="stat-emoji">\uD83D\uDCD6</span><span class="stat-val">'+dailySug+'</span><span class="stat-unit">\u9875</span><div class="stat-label">\u4ECA\u65E5\u5EFA\u8BAE</div></div>'+
+    '<div class="bottom">'+
+      '<div class="streak">🔥 <span>'+streak+'</span>天</div>'+
+      '<div class="book">'+(book||'全部读完 🎉')+'</div>'+
     '</div>'+
-    bookHtml+footerHtml;
+    footerHtml;
 }
 
 function updateHeader(){
   var today=getNewDay(),m=today.getMonth()+1,d=today.getDate(),wd=WEEKDAYS[today.getDay()];
-  document.getElementById('dateText').textContent=m+'\u6708'+d+'\u65E5 \u5468'+wd;
+  document.getElementById('dateText').textContent=m+'月'+d+'日 周'+wd;
   document.getElementById('dTag').textContent='D'+calcD(today);
 }
 
@@ -229,7 +151,7 @@ render();
 
 setInterval(function(){
   var today=getNewDay(),m=today.getMonth()+1,d=today.getDate(),wd=WEEKDAYS[today.getDay()];
-  var t=m+'\u6708'+d+'\u65E5 \u5468'+wd;
+  var t=m+'月'+d+'日 周'+wd;
   if(document.getElementById('dateText').textContent!==t){updateHeader();render()}
 },60000);
 </script>
